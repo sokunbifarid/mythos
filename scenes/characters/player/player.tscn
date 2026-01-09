@@ -516,9 +516,3 @@ shape = SubResource("CapsuleShape2D_4kqyw")
 sprite_frames = SubResource("SpriteFrames_ds8us")
 animation = &"idle_down"
 frame_progress = 0.80055916
-
-[node name="States" type="Node" parent="."]
-
-[node name="Idle" type="Node" parent="States"]
-
-[node name="Run" type="Node" parent="States"]
