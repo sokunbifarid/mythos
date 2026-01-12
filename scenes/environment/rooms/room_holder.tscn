@@ -1,0 +1,29 @@
+[gd_scene load_steps=5 format=3 uid="uid://d1qltpxyk2wsi"]
+
+[ext_resource type="Script" uid="uid://v6sgjstnmn7w" path="res://scripts/environment/rooms/room_holder.gd" id="1_c2nu4"]
+[ext_resource type="PackedScene" uid="uid://7nm5l434uv8v" path="res://scenes/environment/rooms/room_1.tscn" id="1_q5oug"]
+[ext_resource type="PackedScene" uid="uid://cxcxeh2g5i5tk" path="res://scenes/environment/rooms/room_2.tscn" id="2_ajxdv"]
+[ext_resource type="PackedScene" uid="uid://du0nk8wpk2alg" path="res://scenes/environment/rooms/room_3.tscn" id="4_ajxdv"]
+
+[node name="RoomHolder" type="Node2D" node_paths=PackedStringArray("starting_room", "room1_front_door_link_room", "room2_front_door_link_room", "room2_back_door_link_room", "room3_back_door_link_room")]
+script = ExtResource("1_c2nu4")
+starting_room = NodePath("Room1")
+room1_front_door_link_room = NodePath("Room2")
+room2_front_door_link_room = NodePath("Room3")
+room2_back_door_link_room = NodePath("Room1")
+room3_back_door_link_room = NodePath("Room2")
+
+[node name="Room1" parent="." instance=ExtResource("1_q5oug")]
+position = Vector2(300, 0)
+metadata/_edit_group_ = true
+
+[node name="Room2" parent="." instance=ExtResource("2_ajxdv")]
+position = Vector2(1477, 0)
+metadata/_edit_group_ = true
+
+[node name="Room3" parent="." instance=ExtResource("4_ajxdv")]
+position = Vector2(3064, 0)
+
+[editable path="Room1"]
+[editable path="Room2"]
+[editable path="Room3"]

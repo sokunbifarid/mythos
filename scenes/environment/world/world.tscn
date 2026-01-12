@@ -1,0 +1,58 @@
+[gd_scene load_steps=4 format=3 uid="uid://d35ddhv8fphh3"]
+
+[ext_resource type="PackedScene" uid="uid://d1qltpxyk2wsi" path="res://scenes/environment/rooms/room_holder.tscn" id="1_4mnun"]
+[ext_resource type="PackedScene" uid="uid://dplyplo7v4on" path="res://scenes/characters/player/player.tscn" id="2_dc8mk"]
+[ext_resource type="PackedScene" uid="uid://dviuyach2xrds" path="res://scenes/ui/transition/slide_transition.tscn" id="3_dc8mk"]
+
+[node name="World" type="Node"]
+
+[node name="GameNodes" type="Node2D" parent="."]
+
+[node name="RoomHolder" parent="GameNodes" instance=ExtResource("1_4mnun")]
+
+[node name="Player" parent="GameNodes" instance=ExtResource("2_dc8mk")]
+position = Vector2(486, 298)
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="GameUI" type="Control" parent="CanvasLayer"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="HUD" type="Control" parent="CanvasLayer/GameUI"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Dialogue" type="Control" parent="CanvasLayer/GameUI/HUD"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="TransitionUI" type="Control" parent="CanvasLayer/GameUI"]
+z_index = 1
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="SlideTransition" parent="CanvasLayer/GameUI/TransitionUI" instance=ExtResource("3_dc8mk")]
+layout_mode = 1
+
+[node name="PauseUI" type="Control" parent="CanvasLayer/GameUI"]
+z_index = 2
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0

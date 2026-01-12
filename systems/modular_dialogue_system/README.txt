@@ -35,13 +35,13 @@ Here's an example of how your JSON should look:
 ```json
 {{
   "npc_name": {{
-    "1": [
-      "Hello, traveler.",
+	"1": [
+	  "Hello, traveler.",
       "It's dangerous to go alone."
-    ],
-    "2": [
+	],
+	"2": [
       "You've grown stronger since we last met."
-    ]
+	]
   }}
 }}
 ```

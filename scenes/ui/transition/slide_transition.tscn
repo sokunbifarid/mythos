@@ -1,0 +1,83 @@
+[gd_scene load_steps=7 format=3 uid="uid://dviuyach2xrds"]
+
+[ext_resource type="Texture2D" uid="uid://d3xh87fcflvpf" path="res://assets/ui/transition/fade_in_out_background.png" id="1_bgj4i"]
+[ext_resource type="Script" uid="uid://sjlmbueqqxcp" path="res://scripts/ui/transition/slide_transition.gd" id="1_w0t8u"]
+
+[sub_resource type="Animation" id="Animation_yo8iu"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("BlackBackgroundTextureRect:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(-1464, -104)]
+}
+
+[sub_resource type="Animation" id="Animation_kx2wb"]
+resource_name = "slide_in"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("BlackBackgroundTextureRect:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.23333335),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(-1464, -104), Vector2(-152, -104)]
+}
+
+[sub_resource type="Animation" id="Animation_c658y"]
+resource_name = "slide_out"
+length = 0.5
+step = 0.25
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("BlackBackgroundTextureRect:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.25),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(-152, -104), Vector2(-1464, -104)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_kw2i0"]
+_data = {
+&"RESET": SubResource("Animation_yo8iu"),
+&"slide_in": SubResource("Animation_kx2wb"),
+&"slide_out": SubResource("Animation_c658y")
+}
+
+[node name="SlideTransition" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_w0t8u")
+
+[node name="BlackBackgroundTextureRect" type="TextureRect" parent="."]
+layout_mode = 0
+offset_left = -1464.0
+offset_top = -104.0
+offset_right = 4296.0
+offset_bottom = 3136.0
+scale = Vector2(0.25, 0.25)
+texture = ExtResource("1_bgj4i")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+&"": SubResource("AnimationLibrary_kw2i0")
+}
+
+[connection signal="animation_finished" from="AnimationPlayer" to="." method="_on_animation_player_animation_finished"]

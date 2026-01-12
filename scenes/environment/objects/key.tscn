@@ -1,0 +1,31 @@
+[gd_scene load_steps=5 format=3 uid="uid://2cgrufpbwa8i"]
+
+[ext_resource type="Texture2D" uid="uid://bq716jp013xpo" path="res://assets/sprites/environment/rooms/room_type_1/Objects.png" id="1_cikrq"]
+[ext_resource type="Script" uid="uid://bti8a0d2pgts7" path="res://scripts/environment/objects/key.gd" id="1_jtp04"]
+[ext_resource type="Texture2D" uid="uid://c40epum6bu5s3" path="res://icon.svg" id="3_tn8xn"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_jtp04"]
+size = Vector2(20, 12)
+
+[node name="Key" type="Area2D"]
+collision_layer = 16
+script = ExtResource("1_jtp04")
+
+[node name="KeySprite2D" type="Sprite2D" parent="."]
+position = Vector2(0, -15)
+scale = Vector2(2, 2)
+texture = ExtResource("1_cikrq")
+region_enabled = true
+region_rect = Rect2(48, 0, 16, 8)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, -15)
+shape = SubResource("RectangleShape2D_jtp04")
+
+[node name="ShadowSprite2D" type="Sprite2D" parent="."]
+self_modulate = Color(0, 0, 0, 0.13333334)
+position = Vector2(0, -1)
+scale = Vector2(0.2, 0.05)
+texture = ExtResource("3_tn8xn")
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]
