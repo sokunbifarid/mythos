@@ -1,0 +1,64 @@
+[gd_scene load_steps=10 format=3 uid="uid://miesw1fimvo7"]
+
+[ext_resource type="PackedScene" uid="uid://xn6ae31bf2xv" path="res://scenes/characters/npc/base_npc.tscn" id="1_upf0l"]
+[ext_resource type="Texture2D" uid="uid://b472jfv232kcs" path="res://assets/sprites/character/npc/fox_boy_kamari/Kamari-Sheet.png" id="2_bx5xj"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_yx6qe"]
+atlas = ExtResource("2_bx5xj")
+region = Rect2(0, 0, 72, 122)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_3hv8q"]
+atlas = ExtResource("2_bx5xj")
+region = Rect2(72, 0, 72, 122)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_l75lv"]
+atlas = ExtResource("2_bx5xj")
+region = Rect2(144, 0, 72, 122)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vxnxk"]
+atlas = ExtResource("2_bx5xj")
+region = Rect2(216, 0, 72, 122)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fg2iq"]
+atlas = ExtResource("2_bx5xj")
+region = Rect2(288, 0, 72, 122)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ofij2"]
+atlas = ExtResource("2_bx5xj")
+region = Rect2(360, 0, 72, 122)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_rd8an"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_yx6qe")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_3hv8q")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_l75lv")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_vxnxk")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_fg2iq")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ofij2")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 7.0
+}]
+
+[node name="npc_2" instance=ExtResource("1_upf0l")]
+npc_name = "Korgak the Scarred"
+
+[node name="AnimatedSprite2D" parent="." index="0"]
+position = Vector2(2, -23)
+scale = Vector2(0.4, 0.4)
+sprite_frames = SubResource("SpriteFrames_rd8an")
+animation = &"idle"
+autoplay = "idle"

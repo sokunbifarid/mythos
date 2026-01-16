@@ -21,10 +21,12 @@ func _ready() -> void:
 		static_body_collision_shape_2d.disabled = false
 
 func _on_area_2d_body_entered(body: Node2D) -> void:
-	body.set_door_in_range(true, self)
+	if body.is_in_group("player"):
+		body.set_door_in_range(true, self)
 
 func _on_area_2d_body_exited(body: Node2D) -> void:
-	body.set_door_in_range(false, self)
+	if body.is_in_group("player"):
+		body.set_door_in_range(false, self)
 
 func is_door_opened() -> bool:
 	return door_opened

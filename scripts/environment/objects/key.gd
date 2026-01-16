@@ -13,8 +13,10 @@ func _ready() -> void:
 
 
 func _on_body_entered(body: Node2D) -> void:
-	body.equip_key()
-	self.set_deferred("monitoring", false)
-	self.set_deferred("monitorable", false)
-	self.hide()
+	if body.is_in_group("player"):
+		if not body.equip_key():
+			return
+		self.set_deferred("monitoring", false)
+		self.set_deferred("monitorable", false)
+		self.hide()
 	the_tween.kill()

@@ -1,0 +1,64 @@
+[gd_scene load_steps=10 format=3 uid="uid://bjpbsbsevieh2"]
+
+[ext_resource type="PackedScene" uid="uid://xn6ae31bf2xv" path="res://scenes/characters/npc/base_npc.tscn" id="1_5t76y"]
+[ext_resource type="Texture2D" uid="uid://64cpj6mhkhrt" path="res://assets/sprites/character/npc/wizard_man_boy/Idle.png" id="2_1exwq"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7i0q0"]
+atlas = ExtResource("2_1exwq")
+region = Rect2(0, 0, 231, 190)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_33p1b"]
+atlas = ExtResource("2_1exwq")
+region = Rect2(231, 0, 231, 190)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4ty2i"]
+atlas = ExtResource("2_1exwq")
+region = Rect2(462, 0, 231, 190)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_o7hvh"]
+atlas = ExtResource("2_1exwq")
+region = Rect2(693, 0, 231, 190)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qvb5s"]
+atlas = ExtResource("2_1exwq")
+region = Rect2(924, 0, 231, 190)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_hnumn"]
+atlas = ExtResource("2_1exwq")
+region = Rect2(1155, 0, 231, 190)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_jq5aa"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_7i0q0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_33p1b")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_4ty2i")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_o7hvh")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_qvb5s")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_hnumn")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 7.0
+}]
+
+[node name="npc_3" instance=ExtResource("1_5t76y")]
+npc_name = "The Weeping Statues"
+
+[node name="AnimatedSprite2D" parent="." index="0"]
+position = Vector2(5, -26)
+scale = Vector2(0.5, 0.5)
+sprite_frames = SubResource("SpriteFrames_jq5aa")
+animation = &"idle"
+autoplay = "idle"

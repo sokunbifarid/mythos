@@ -1,75 +1,111 @@
 extends CharacterBody2D
 
-@export var npc_name: String = "Alyra"         # Name identifier for this NPC
-@export var story_stage: int = 1               # Stage or chapter for dialogue branching
-@onready var chat_area = $chat_detection_area  # Area2D used to detect player proximity
-@onready var sprite = $AnimatedSprite2D
-@onready var textbox = get_parent().get_node("Textbox")  # Get the textbox from the parent scene
+@export var npc_name: String = ""
+@export var story_stage: int = 0
+@export var health: int = 4
+@export var shield: int = 2
+@export var damage: int = 2
+@onready var interact_label: Label = $PocketVBoxContainer/InteractLabel
+@onready var animated_sprite_2d: AnimatedSprite2D = $AnimatedSprite2D
+@onready var stats_label: Label = $PocketVBoxContainer/StatsLabel
+var battle_room: Node2D
+
+enum all_states{STOPPED, IDLE, CHATTING, BATTLE}
+var current_state: all_states = all_states.IDLE
 
 var player_in_range = false
-var dialogue_lines = []        # Stores current dialogue lines for this NPC
-var dialogue_index = 0         # Tracks current line being shown
-var is_chatting = false        # Tracks whether a chat is ongoing
+var shield_is_up: bool = false
+var last_world_position: Vector2 = Vector2.ZERO
 
-func _ready():
-	# Connect area enter/exit signals
-	chat_area.body_entered.connect(_on_body_entered)
-	chat_area.body_exited.connect(_on_body_exited)
+func _ready() -> void:
+	randomize()
+	SignalHandler.end_dialogue.connect(_on_end_dialogue)
+	SignalHandler.preparing_to_go_for_battle.connect(_on_preparing_to_go_for_battle)
+	SignalHandler.gather_battle_data.connect(_on_gather_battle_data)
+	interact_label.hide()
+	animated_sprite_2d.play("idle")
+	hide_stats()
 
-func _process(_delta):
-	# Only check for input if the player is in range
-	if not player_in_range:
-		return
+func _on_end_dialogue() -> void:
+	current_state = all_states.IDLE
 
-	if Input.is_action_just_pressed("chat"):
-		if not is_chatting:
-			start_chat()
-		elif textbox.current_state == textbox.State.FINISHED:
-			start_chat()
+func _on_preparing_to_go_for_battle() -> void:
+	current_state = all_states.STOPPED
+	last_world_position = self.global_position
 
-func _on_body_entered(body):
-	# Triggered when player enters chat area
-	if body.name == "Player":
-		player_in_range = true
-		print("In chat range")
-		# Flip sprite to face the player
-		sprite.flip_h = body.global_position.x < global_position.x
+func _on_gather_battle_data() -> void:
+	current_state = all_states.BATTLE
+	show_stats()
 
-func _on_body_exited(body):
-	# Triggered when player exits chat area
-	if body.name == "Player":
+func interact() -> bool:
+	if current_state == all_states.IDLE:
+		if DialogueManager.check_if_dialogue_is_present(npc_name, story_stage):
+			SignalHandler.emit_start_dialogue_signal(self)
+			current_state = all_states.CHATTING
+			interact_label.hide()
+			return true
+	return false
+
+func increase_story_stage() -> void:
+	story_stage += 1
+
+func get_npc_name() -> String:
+	return npc_name
+
+func get_story_stage() -> int:
+	return story_stage
+
+func set_battle_room(the_room: Node2D) -> void:
+	battle_room = the_room
+
+func _on_chat_detection_area_body_entered(body: Node2D) -> void:
+	if body.is_in_group("player"):
+		if current_state != all_states.CHATTING:
+			player_in_range = true
+			body.set_body_to_interact_with(self)
+			interact_label.show()
+
+
+func _on_chat_detection_area_body_exited(body: Node2D) -> void:
+	if body.is_in_group("player"):
 		player_in_range = false
-		print("Out of chat range")
-		sprite.flip_h = body.global_position.x < global_position.x
-		if is_chatting:
-			end_chat()
+		body.set_body_to_interact_with(null)
+		interact_label.hide()
 
-func start_chat():
-	# Loads dialogue from DialogueManager and shows current line
-	print("start_chat() called")
-	print("is_chatting:", is_chatting)
-	print("dialogue_lines empty?", dialogue_lines.is_empty())
-	print("dialogue_index:", dialogue_index)
+func get_health() -> int:
+	return health
 
-	if dialogue_lines.is_empty():
-		dialogue_lines = DialogueManager.get_dialogue(npc_name, story_stage)
-		dialogue_index = 0
-		print("Loaded new dialogue:", dialogue_lines.size())
+func get_damage() -> int:
+	return damage
 
-	if dialogue_index < dialogue_lines.size():
-		print("Showing line", dialogue_index + 1, "→", dialogue_lines[dialogue_index])
-		textbox.queue_text(dialogue_lines[dialogue_index])
-		textbox.display_text()
-		is_chatting = true
-		dialogue_index += 1
-	else:
-		print("End of dialogue triggered")
-		end_chat()
+func attack() -> void:
+	pass
 
-func end_chat():
-	# Ends the conversation and resets dialogue tracking
-	print("Chat ended.")
-	is_chatting = false
-	dialogue_index = 0
-	dialogue_lines = []  # Replace the array instead of clearing
-	textbox.hide_textbox()
+func take_damage(value: int) -> void:
+	if not shield_is_up:
+		if health > 0:
+			health -= value
+
+func defend() -> void:
+	shield_is_up = true
+
+func remove_shield() -> void:
+	shield_is_up = false
+
+func allow_spare() -> bool:
+	return true
+
+func show_stats() -> void:
+	stats_label.show()
+
+func hide_stats() -> void:
+	stats_label.hide()
+
+func select_random_task() -> GameManager.character_battle_tasks:
+	var random_selection: int = randi_range(0, GameManager.character_battle_tasks.size() - 2)
+	if random_selection == 0:
+		return GameManager.character_battle_tasks.ATTACK
+	return GameManager.character_battle_tasks.DEFEND
+
+func set_stats() -> void:
+	stats_label.text = "H: " + str(health) + " D: " + str(damage) + " S: " + str(shield)

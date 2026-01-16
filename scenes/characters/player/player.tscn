@@ -567,8 +567,8 @@ animations = [{
 radius = 5.0
 height = 12.0
 
-[node name="Player" type="CharacterBody2D"]
-collision_mask = 3
+[node name="Player" type="CharacterBody2D" groups=["player"]]
+collision_mask = 7
 script = ExtResource("1_7uws0")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
@@ -577,6 +577,7 @@ sprite_frames = SubResource("SpriteFrames_ds8us")
 animation = &"climb_ladder"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, 2)
 shape = SubResource("CapsuleShape2D_4kqyw")
 
 [node name="Camera2D" type="Camera2D" parent="."]
@@ -587,7 +588,19 @@ position_smoothing_enabled = true
 
 [node name="KeyPickedSprite2D" type="Sprite2D" parent="PickedObjects"]
 visible = false
-position = Vector2(0, -28)
+position = Vector2(0, -36)
 texture = ExtResource("10_3xnwo")
 region_enabled = true
 region_rect = Rect2(48, 0, 16, 8)
+
+[node name="PocketVBoxContainer" type="VBoxContainer" parent="."]
+offset_left = -21.0
+offset_top = -33.0
+offset_right = 21.0
+offset_bottom = -22.0
+
+[node name="StatsLabel" type="Label" parent="PocketVBoxContainer"]
+layout_mode = 2
+theme_override_constants/outline_size = 3
+theme_override_font_sizes/font_size = 7
+text = "H: 4 D: 2 S: 2"

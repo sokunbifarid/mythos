@@ -1,11 +1,17 @@
 extends CharacterBody2D
 
 
-
+@export var player_name: String = "Reggie"
+@export var health: int = 4
+@export var shield: int = 2
+@export var damage: int = 2
 @onready var animated_sprite_2d_node: AnimatedSprite2D = $AnimatedSprite2D
 @onready var key_picked_sprite_2d: Sprite2D = $PickedObjects/KeyPickedSprite2D
 @onready var camera_2d: Camera2D = $Camera2D
+@onready var stats_label: Label = $PocketVBoxContainer/StatsLabel
+var battle_room: Node2D
 
+var last_world_position: Vector2 = Vector2.ZERO
 var direction: Vector2 = Vector2.ZERO
 var last_direction: Vector2 = Vector2.ZERO
 var body_to_interact_with
@@ -17,25 +23,53 @@ var connecting_door_endpoint: Vector2 = Vector2.ZERO
 var key_is_equipped: bool = false
 const SPEED = 100.0
 const CLIMB_SPEED = 60
+var shield_is_up: bool = false
 
-enum state{STOPPED, IDLE, CLIMBING_LADDER, USING_DOOR}
+enum state{STOPPED, IDLE, INTERACTING, CLIMBING_LADDER, USING_DOOR, BATTLE}
 var current_state: state = state.STOPPED
 
 func _ready() -> void:
 	SignalHandler.slide_transition_completed.connect(_on_slide_transition_completed)
 	SignalHandler.slide_transition_half_completed.connect(_on_slide_transition_half_completed)
+	SignalHandler.preparing_to_go_for_battle.connect(_on_preparing_to_go_for_battle)
+	SignalHandler.start_battle.connect(_on_start_battle)
+	SignalHandler.end_dialogue.connect(_on_end_dialogue)
+	SignalHandler.gather_battle_data.connect(_on_gather_battle_data)
 	current_state = state.IDLE
 	key_picked_sprite_2d.hide()
+	set_player_name_globally()
+	set_stats()
+	hide_stats()
+
+func set_player_name_globally() -> void:
+	GameManager.set_player(self)
 
 func _on_slide_transition_half_completed() -> void:
 	link_door()
 
+func _on_preparing_to_go_for_battle() -> void:
+	prepare_for_battle()
+
 func _on_slide_transition_completed() -> void:
 	clear_using_door()
 
+func _on_end_dialogue() -> void:
+	if current_state == state.INTERACTING:
+		current_state = state.IDLE
+		hide_stats()
+
+func _on_start_battle() -> void:
+	go_for_battle()
+
+func _on_gather_battle_data() -> void:
+	camera_2d.enabled = false
+	show_stats()
+
 func _input(event: InputEvent) -> void:
-	if event.is_action_pressed("interact") and body_to_interact_with:
-		body_to_interact_with.interact()
+	if current_state == state.IDLE:
+		if event.is_action_pressed("interact") and body_to_interact_with:
+			if body_to_interact_with.interact():
+				current_state = state.INTERACTING
 
 func _physics_process(_delta: float) -> void:
 	if current_state == state.IDLE or current_state == state.CLIMBING_LADDER:
@@ -159,10 +193,61 @@ func link_door() -> void:
 	self.global_position = connecting_door_endpoint
 	connecting_door_endpoint = Vector2.ZERO
 
-func equip_key() -> void:
-	key_is_equipped = true
-	key_picked_sprite_2d.show()
+func equip_key() -> bool:
+	if not key_is_equipped:
+		key_is_equipped = true
+		key_picked_sprite_2d.show()
+		return true
+	return false
 
 func drop_key() -> void:
 	key_is_equipped = false
 	key_picked_sprite_2d.hide()
+
+func prepare_for_battle() -> void:
+	current_state = state.STOPPED
+	last_world_position = self.global_position
+	
+
+func go_for_battle() ->  void:
+	current_state = state.BATTLE
+
+func set_battle_room(the_room: Node2D) -> void:
+	battle_room = the_room
+
+func attack() -> void:
+	pass
+
+func get_health() -> int:
+	return health
+
+func get_damage() -> int:
+	return damage
+
+func take_damage(value: int) -> void:
+	if not shield_is_up:
+		if health > 0:
+			health -= value
+			if health <= 0:
+				die()
+
+func die() -> void:
+	SignalHandler.emit_enemy_lost_battle_signal()
+
+func defend() -> void:
+	shield_is_up = true
+
+func remove_shield() -> void:
+	shield_is_up = false
+
+func spare() -> void:
+	pass
+
+func show_stats() -> void:
+	stats_label.show()
+
+func hide_stats() -> void:
+	stats_label.hide()
+
+func set_stats() -> void:
+	stats_label.text = "H: " + str(health) + " D: " + str(damage) + " S: " + str(shield)

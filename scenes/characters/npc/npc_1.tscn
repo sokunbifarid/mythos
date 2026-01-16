@@ -1,0 +1,78 @@
+[gd_scene load_steps=12 format=3 uid="uid://bd0k7wvq4juj4"]
+
+[ext_resource type="PackedScene" uid="uid://xn6ae31bf2xv" path="res://scenes/characters/npc/base_npc.tscn" id="1_o2vp8"]
+[ext_resource type="Texture2D" uid="uid://cusdd2dfmv0an" path="res://assets/sprites/character/npc/female_adventurer/Idle/Idle_Down.png" id="2_hwlxu"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_nq32v"]
+atlas = ExtResource("2_hwlxu")
+region = Rect2(0, 0, 48, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8pie1"]
+atlas = ExtResource("2_hwlxu")
+region = Rect2(48, 0, 48, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_nag2f"]
+atlas = ExtResource("2_hwlxu")
+region = Rect2(96, 0, 48, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_w8n56"]
+atlas = ExtResource("2_hwlxu")
+region = Rect2(144, 0, 48, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_bemoo"]
+atlas = ExtResource("2_hwlxu")
+region = Rect2(192, 0, 48, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8xd3q"]
+atlas = ExtResource("2_hwlxu")
+region = Rect2(240, 0, 48, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_supds"]
+atlas = ExtResource("2_hwlxu")
+region = Rect2(288, 0, 48, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_g548k"]
+atlas = ExtResource("2_hwlxu")
+region = Rect2(336, 0, 48, 64)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_m4jlf"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_nq32v")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_8pie1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_nag2f")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_w8n56")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_bemoo")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_8xd3q")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_supds")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_g548k")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 7.0
+}]
+
+[node name="npc1" instance=ExtResource("1_o2vp8")]
+npc_name = "Guide Olara"
+
+[node name="AnimatedSprite2D" parent="." index="0"]
+position = Vector2(0, -19)
+scale = Vector2(1.3, 1.3)
+sprite_frames = SubResource("SpriteFrames_m4jlf")
+animation = &"idle"
+autoplay = "idle"

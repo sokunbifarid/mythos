@@ -1,10 +1,11 @@
-[gd_scene load_steps=6 format=4 uid="uid://7nm5l434uv8v"]
+[gd_scene load_steps=7 format=4 uid="uid://7nm5l434uv8v"]
 
 [ext_resource type="Texture2D" uid="uid://cvnm22lukpuw5" path="res://assets/sprites/environment/rooms/room_type_1/walls_floor.png" id="1_7vlbh"]
 [ext_resource type="Script" uid="uid://ch6s4y8l52plt" path="res://scripts/environment/rooms/room_1.gd" id="1_404dg"]
 [ext_resource type="TileSet" uid="uid://cu20rhvtxoxvf" path="res://resources/tileset/rooms/room_1.tres" id="1_xs7u7"]
 [ext_resource type="PackedScene" uid="uid://dirvjb43qf6s2" path="res://scenes/environment/objects/ladder.tscn" id="4_404dg"]
 [ext_resource type="PackedScene" uid="uid://d3nnfyxwh6t2r" path="res://scenes/environment/objects/doors.tscn" id="4_ydn28"]
+[ext_resource type="PackedScene" uid="uid://bd0k7wvq4juj4" path="res://scenes/characters/npc/npc_1.tscn" id="5_ydn28"]
 
 [node name="Room1" type="Node2D"]
 script = ExtResource("1_404dg")
@@ -44,6 +45,11 @@ tile_set = ExtResource("1_xs7u7")
 
 [node name="room1_front_door" parent="Objects/Doors" instance=ExtResource("4_ydn28")]
 position = Vector2(96, 160)
+
+[node name="NPC" type="Node2D" parent="."]
+
+[node name="npc1" parent="NPC" instance=ExtResource("5_ydn28")]
+position = Vector2(72, 328)
 
 [node name="ladder" parent="." instance=ExtResource("4_404dg")]
 position = Vector2(144, 434)

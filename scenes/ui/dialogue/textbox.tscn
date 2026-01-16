@@ -1,6 +1,8 @@
-[gd_scene load_steps=3 format=3 uid="uid://clmsynjo4hj64"]
+[gd_scene load_steps=8 format=3 uid="uid://clmsynjo4hj64"]
 
 [ext_resource type="Script" uid="uid://b7u4yg1s5n4is" path="res://scripts/ui/dialogue/textbox.gd" id="1_xf0mn"]
+[ext_resource type="Texture2D" uid="uid://5soeuubrgms3" path="res://assets/sprites/character/player/face.png" id="2_sr42b"]
+[ext_resource type="Texture2D" uid="uid://432a8oebfb3f" path="res://assets/sprites/character/npc/wizard_man_boy/face.png" id="3_stvs0"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_m2odn"]
 bg_color = Color(0.361694, 0.314752, 0.241638, 1)
@@ -10,10 +12,24 @@ border_width_right = 2
 border_width_bottom = 2
 border_color = Color(1, 1, 1, 1)
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_5xdfr"]
+bg_color = Color(0.48063964, 0.4225654, 0.3356059, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 1, 1, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_sr42b"]
+bg_color = Color(0.37441194, 0.32552215, 0.2504334, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_stvs0"]
+bg_color = Color(0.6953805, 0.49262446, 0.37823313, 1)
+
 [node name="Textbox" type="CanvasLayer"]
 script = ExtResource("1_xf0mn")
 
-[node name="MarginContainer" type="MarginContainer" parent="."]
+[node name="TextMarginContainer" type="MarginContainer" parent="."]
 anchors_preset = 12
 anchor_top = 1.0
 anchor_right = 1.0
@@ -25,27 +41,114 @@ theme_override_constants/margin_left = 16
 theme_override_constants/margin_right = 16
 theme_override_constants/margin_bottom = 16
 
-[node name="Panel" type="Panel" parent="MarginContainer"]
+[node name="Panel" type="Panel" parent="TextMarginContainer"]
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_m2odn")
 
-[node name="MarginContainer" type="MarginContainer" parent="MarginContainer"]
+[node name="NpcTextureRect" type="TextureRect" parent="TextMarginContainer/Panel"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="CharactersTexturesControl" type="Control" parent="TextMarginContainer/Panel"]
+layout_mode = 1
+anchors_preset = 14
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_top = -201.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="PlayerTextureRect" type="TextureRect" parent="TextMarginContainer/Panel/CharactersTexturesControl"]
+show_behind_parent = true
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -150.0
+offset_bottom = 128.0
+grow_horizontal = 0
+texture = ExtResource("2_sr42b")
+
+[node name="PlayerNameLabel" type="Label" parent="TextMarginContainer/Panel/CharactersTexturesControl/PlayerTextureRect"]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -44.0
+offset_top = -19.0
+offset_right = 44.0
+offset_bottom = 16.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 10
+theme_override_font_sizes/font_size = 25
+text = "Reggie"
+uppercase = true
+
+[node name="NPCHolderControl" type="Control" parent="TextMarginContainer/Panel/CharactersTexturesControl"]
+show_behind_parent = true
+anchors_preset = 0
+offset_right = 189.0
+offset_bottom = 141.0
+
+[node name="NPCTextureRect" type="TextureRect" parent="TextMarginContainer/Panel/CharactersTexturesControl/NPCHolderControl"]
+show_behind_parent = true
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -75.0
+offset_top = -128.0
+offset_right = 75.0
+grow_horizontal = 2
+grow_vertical = 0
+texture = ExtResource("3_stvs0")
+
+[node name="NPCNameLabel" type="Label" parent="TextMarginContainer/Panel/CharactersTexturesControl/NPCHolderControl/NPCTextureRect"]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -71.0
+offset_top = -43.0
+offset_right = 71.0
+offset_bottom = 16.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 10
+theme_override_font_sizes/font_size = 20
+text = "The Weeping Statues"
+horizontal_alignment = 1
+autowrap_mode = 2
+uppercase = true
+
+[node name="MarginContainer" type="MarginContainer" parent="TextMarginContainer"]
 layout_mode = 2
 theme_override_constants/margin_left = 16
 theme_override_constants/margin_top = 16
 theme_override_constants/margin_right = 16
 theme_override_constants/margin_bottom = 16
 
-[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/MarginContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="TextMarginContainer/MarginContainer"]
 layout_mode = 2
 
-[node name="Start" type="Label" parent="MarginContainer/MarginContainer/HBoxContainer"]
+[node name="Start" type="Label" parent="TextMarginContainer/MarginContainer/HBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 0
 theme_override_font_sizes/font_size = 30
 text = "*"
 
-[node name="Label" type="RichTextLabel" parent="MarginContainer/MarginContainer/HBoxContainer"]
+[node name="Label" type="RichTextLabel" parent="TextMarginContainer/MarginContainer/HBoxContainer"]
 custom_minimum_size = Vector2(1, 1)
 layout_mode = 2
 size_flags_horizontal = 3
@@ -53,9 +156,99 @@ theme_override_font_sizes/normal_font_size = 20
 text = "The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. "
 autowrap_mode = 2
 
-[node name="End" type="Label" parent="MarginContainer/MarginContainer/HBoxContainer"]
+[node name="End" type="Label" parent="TextMarginContainer/MarginContainer/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 8
 size_flags_vertical = 8
 theme_override_font_sizes/font_size = 30
-text = "v"
+text = "[Enter]"
+
+[node name="OptionsMarginContainer" type="MarginContainer" parent="."]
+visible = false
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 167.0
+offset_top = -292.0
+offset_right = -144.0
+offset_bottom = -144.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 16
+
+[node name="Panel" type="Panel" parent="OptionsMarginContainer"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_5xdfr")
+
+[node name="MarginContainer" type="MarginContainer" parent="OptionsMarginContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 16
+
+[node name="VBoxContainer" type="VBoxContainer" parent="OptionsMarginContainer/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 15
+alignment = 1
+
+[node name="Option1Button" type="Button" parent="OptionsMarginContainer/MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 25)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_sr42b")
+theme_override_styles/focus = SubResource("StyleBoxFlat_stvs0")
+text_overrun_behavior = 2
+autowrap_mode = 3
+clip_text = true
+
+[node name="Label" type="Label" parent="OptionsMarginContainer/MarginContainer/VBoxContainer/Option1Button"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "Step aside, or I'll move you myself."
+horizontal_alignment = 1
+text_overrun_behavior = 2
+
+[node name="Option2Button" type="Button" parent="OptionsMarginContainer/MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 25)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_sr42b")
+theme_override_styles/focus = SubResource("StyleBoxFlat_stvs0")
+text_overrun_behavior = 2
+autowrap_mode = 3
+clip_text = true
+
+[node name="Label" type="Label" parent="OptionsMarginContainer/MarginContainer/VBoxContainer/Option2Button"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "Step aside, or I'll move you myself."
+horizontal_alignment = 1
+text_overrun_behavior = 2
+
+[node name="ItemReceiveMarginContainer" type="MarginContainer" parent="."]
+anchors_preset = 14
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_top = -160.0
+offset_bottom = -32.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ItemReceivedTextureRect" type="TextureRect" parent="ItemReceiveMarginContainer"]
+visible = false
+layout_mode = 2
+stretch_mode = 5
+
+[connection signal="pressed" from="OptionsMarginContainer/MarginContainer/VBoxContainer/Option1Button" to="." method="_on_option_1_button_pressed"]
+[connection signal="pressed" from="OptionsMarginContainer/MarginContainer/VBoxContainer/Option2Button" to="." method="_on_option_2_button_pressed"]

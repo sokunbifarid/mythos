@@ -1,9 +1,11 @@
-[gd_scene load_steps=5 format=4 uid="uid://du0nk8wpk2alg"]
+[gd_scene load_steps=7 format=4 uid="uid://du0nk8wpk2alg"]
 
 [ext_resource type="Script" uid="uid://cqfjdq1s7mdpi" path="res://scripts/environment/rooms/room_3.gd" id="1_axbbf"]
 [ext_resource type="Texture2D" uid="uid://cvnm22lukpuw5" path="res://assets/sprites/environment/rooms/room_type_1/walls_floor.png" id="1_wlbqx"]
 [ext_resource type="TileSet" uid="uid://cu20rhvtxoxvf" path="res://resources/tileset/rooms/room_1.tres" id="2_axbbf"]
 [ext_resource type="PackedScene" uid="uid://d3nnfyxwh6t2r" path="res://scenes/environment/objects/doors.tscn" id="2_nglty"]
+[ext_resource type="PackedScene" uid="uid://2cgrufpbwa8i" path="res://scenes/environment/objects/key.tscn" id="5_6huq3"]
+[ext_resource type="PackedScene" uid="uid://miesw1fimvo7" path="res://scenes/characters/npc/npc_2.tscn" id="5_axbbf"]
 
 [node name="Room3" type="Node2D"]
 script = ExtResource("1_axbbf")
@@ -38,6 +40,16 @@ tile_set = ExtResource("2_axbbf")
 
 [node name="room3_back_door" parent="Objects/Doors" instance=ExtResource("2_nglty")]
 position = Vector2(480, 288)
+
+[node name="Keys" type="Node2D" parent="Objects"]
+
+[node name="Key" parent="Objects/Keys" instance=ExtResource("5_6huq3")]
+position = Vector2(300, 255)
+
+[node name="NPC" type="Node2D" parent="."]
+
+[node name="npc_2" parent="NPC" instance=ExtResource("5_axbbf")]
+position = Vector2(585, 474)
 
 [node name="BackDoorPlayerEntryMarker2D" type="Marker2D" parent="."]
 position = Vector2(480, 336)
