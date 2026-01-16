@@ -9,6 +9,8 @@ extends CharacterBody2D
 @onready var key_picked_sprite_2d: Sprite2D = $PickedObjects/KeyPickedSprite2D
 @onready var camera_2d: Camera2D = $Camera2D
 @onready var stats_label: Label = $PocketVBoxContainer/StatsLabel
+@onready var collision_shape_2d: CollisionShape2D = $CollisionShape2D
+
 var battle_room: Node2D
 
 var last_world_position: Vector2 = Vector2.ZERO
@@ -35,6 +37,8 @@ func _ready() -> void:
 	SignalHandler.start_battle.connect(_on_start_battle)
 	SignalHandler.end_dialogue.connect(_on_end_dialogue)
 	SignalHandler.gather_battle_data.connect(_on_gather_battle_data)
+	SignalHandler.finished_returning_from_battle.connect(_on_finished_returning_from_battle)
+	SignalHandler.half_way_returning_from_battle.connect(_on_half_way_returning_from_battle)
 	current_state = state.IDLE
 	key_picked_sprite_2d.hide()
 	set_player_name_globally()
@@ -64,6 +68,18 @@ func _on_start_battle() -> void:
 func _on_gather_battle_data() -> void:
 	camera_2d.enabled = false
 	show_stats()
+
+func _on_half_way_returning_from_battle() -> void:
+	if current_state == state.BATTLE:
+		self.global_position = last_world_position
+		last_world_position = Vector2.ZERO
+		camera_2d.enabled = true
+		hide_stats()
+		body_to_interact_with = null
+
+func _on_finished_returning_from_battle() -> void:
+	current_state = state.IDLE
+	collision_shape_2d.set_deferred("disabled", false)
 
 func _input(event: InputEvent) -> void:
 	if current_state == state.IDLE:
@@ -207,7 +223,7 @@ func drop_key() -> void:
 func prepare_for_battle() -> void:
 	current_state = state.STOPPED
 	last_world_position = self.global_position
-	
+	collision_shape_2d.set_deferred("disabled", true)
 
 func go_for_battle() ->  void:
 	current_state = state.BATTLE
@@ -228,11 +244,7 @@ func take_damage(value: int) -> void:
 	if not shield_is_up:
 		if health > 0:
 			health -= value
-			if health <= 0:
-				die()
-
-func die() -> void:
-	SignalHandler.emit_enemy_lost_battle_signal()
+			set_stats()
 
 func defend() -> void:
 	shield_is_up = true

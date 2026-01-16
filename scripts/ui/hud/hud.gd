@@ -5,6 +5,7 @@ extends Control
 @onready var battle_result_panel: Panel = $BattleUI/BattleResultPanel
 @onready var you_win_battle_result_label: Label = $BattleUI/BattleResultPanel/YouWinBattleResultLabel
 @onready var you_lost_battle_result_label: Label = $BattleUI/BattleResultPanel/YouLostBattleResultLabel
+@onready var attack_button: Button = $BattleUI/PlayerInputPanel/BattleUIGridContainer/AttackButton
 
 func _ready() -> void:
 	SignalHandler.preparing_to_go_for_battle.connect(_on_preparing_to_go_for_battle)
@@ -13,12 +14,14 @@ func _ready() -> void:
 	SignalHandler.prepare_battle_fight.connect(_on_prepare_battle_fight)
 	SignalHandler.player_lost_battle.connect(_on_player_lost_battle)
 	SignalHandler.enemy_lost_battle.connect(_on_enemy_lost_battle)
+	SignalHandler.half_way_returning_from_battle.connect(_on_half_way_returning_from_battle)
 	battle_margin_container.hide()
 	player_input_panel.hide()
 	hide_battle_result()
 
 func _on_enable_player_battle_ui() -> void:
 	player_input_panel.show()
+	attack_button.grab_focus()
 
 func _on_preparing_to_go_for_battle() -> void:
 	battle_margin_container.show()
@@ -48,6 +51,9 @@ func _on_player_lost_battle() -> void:
 
 func _on_enemy_lost_battle() -> void:
 	show_player_win_battle_result()
+
+func _on_half_way_returning_from_battle() -> void:
+	hide_battle_result()
 
 func hide_battle_result() -> void:
 	battle_result_panel.hide()

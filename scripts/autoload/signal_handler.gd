@@ -9,12 +9,14 @@ signal end_dialogue
 signal preparing_to_go_for_battle
 signal gather_battle_data
 signal start_battle
-signal end_battle
+#signal end_battle
 signal enable_player_battle_ui
 signal player_selected_battle_option(id: int)
 signal player_lost_battle
 signal enemy_lost_battle
 signal prepare_battle_fight
+signal half_way_returning_from_battle
+signal finished_returning_from_battle
 
 func emit_slide_transition_half_completed_signal() -> void:
 	slide_transition_half_completed.emit()
@@ -44,8 +46,8 @@ func emit_gather_battle_data_signal() -> void:
 func emit_start_battle_signal() -> void:
 	start_battle.emit()
 
-func emit_end_battle_signal() -> void:
-	end_battle.emit()
+#func emit_end_battle_signal() -> void:
+	#end_battle.emit()
 
 func emit_enable_player_battle_ui_signal() -> void:
 	enable_player_battle_ui.emit()
@@ -61,3 +63,9 @@ func emit_enemy_lost_battle_signal() -> void:
 
 func emit_prepare_battle_fight_signal() -> void:
 	prepare_battle_fight.emit()
+
+func emit_half_way_returning_from_battle_signal() -> void:
+	half_way_returning_from_battle.emit()
+
+func emit_finished_returning_from_battle_signal() -> void:
+	finished_returning_from_battle.emit()

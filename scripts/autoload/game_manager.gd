@@ -4,7 +4,7 @@ var main_player: CharacterBody2D
 var player_name: String = ""
 var enemy_to_battle: CharacterBody2D
 
-enum all_game_state{WORLD, BATTLE}
+enum all_game_state{WORLD, BATTLE, RETURN_FROM_BATTLE}
 var current_game_state: all_game_state = all_game_state.WORLD
 
 enum character_battle_tasks{ATTACK, DEFEND, SPARE}
@@ -28,6 +28,11 @@ func is_world() -> bool:
 
 func is_battle() -> bool:
 	if current_game_state == all_game_state.BATTLE:
+		return true
+	return false
+
+func is_return_from_battle() -> bool:
+	if current_game_state == all_game_state.RETURN_FROM_BATTLE:
 		return true
 	return false
 

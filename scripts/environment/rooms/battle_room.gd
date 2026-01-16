@@ -20,6 +20,7 @@ var enemy_waiting_to_attack: bool = false
 func _ready() -> void:
 	SignalHandler.gather_battle_data.connect(_on_gather_battle_data)
 	SignalHandler.player_selected_battle_option.connect(_on_player_selected_battle_option)
+	SignalHandler.half_way_returning_from_battle.connect(_on_half_way_returning_from_battle)
 	disable_battle_stage()
 
 func _on_gather_battle_data() -> void:
@@ -34,6 +35,9 @@ func _on_player_selected_battle_option(id: int) -> void:
 		GameManager.character_battle_tasks.SPARE:
 			player_character_task = GameManager.character_battle_tasks.SPARE
 	launch_timer(FIRST_DELAY_ON_BATTLE_START)
+
+func _on_half_way_returning_from_battle() -> void:
+	disable_battle_stage()
 
 func enable_battle_stage() -> void:
 	camera_2d.enabled = true
@@ -176,6 +180,8 @@ func _on_battle_loop_timer_timeout() -> void:
 	elif current_room_state == room_state.ENEMY_CHALLENGE:
 		battle_loop()
 	elif current_room_state == room_state.PLAYER_LOST:
+		GameManager.current_game_state = GameManager.all_game_state.RETURN_FROM_BATTLE
 		SignalHandler.emit_player_lost_battle_signal()
 	elif current_room_state == room_state.ENEMY_LOST:
+		GameManager.current_game_state = GameManager.all_game_state.RETURN_FROM_BATTLE
 		SignalHandler.emit_enemy_lost_battle_signal()

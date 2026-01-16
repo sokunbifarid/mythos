@@ -8,6 +8,9 @@ extends CharacterBody2D
 @onready var interact_label: Label = $PocketVBoxContainer/InteractLabel
 @onready var animated_sprite_2d: AnimatedSprite2D = $AnimatedSprite2D
 @onready var stats_label: Label = $PocketVBoxContainer/StatsLabel
+@onready var chat_detection_collision_shape_2d: CollisionShape2D = $chat_detection_area/CollisionShape2D
+@onready var collision_shape_2d: CollisionShape2D = $CollisionShape2D
+
 var battle_room: Node2D
 
 enum all_states{STOPPED, IDLE, CHATTING, BATTLE}
@@ -22,6 +25,8 @@ func _ready() -> void:
 	SignalHandler.end_dialogue.connect(_on_end_dialogue)
 	SignalHandler.preparing_to_go_for_battle.connect(_on_preparing_to_go_for_battle)
 	SignalHandler.gather_battle_data.connect(_on_gather_battle_data)
+	SignalHandler.half_way_returning_from_battle.connect(_on_half_way_returning_from_battle)
+	SignalHandler.finished_returning_from_battle.connect(_on_finished_returning_from_battle)
 	interact_label.hide()
 	animated_sprite_2d.play("idle")
 	hide_stats()
@@ -32,10 +37,24 @@ func _on_end_dialogue() -> void:
 func _on_preparing_to_go_for_battle() -> void:
 	current_state = all_states.STOPPED
 	last_world_position = self.global_position
+	chat_detection_collision_shape_2d.set_deferred("disabled", true)
+	collision_shape_2d.set_deferred("disabled", true)
 
 func _on_gather_battle_data() -> void:
 	current_state = all_states.BATTLE
 	show_stats()
+
+func _on_half_way_returning_from_battle() -> void:
+	if current_state == all_states.BATTLE:
+		self.global_position = last_world_position
+		last_world_position = Vector2.ZERO
+		hide_stats()
+		interact_label.hide()
+
+func _on_finished_returning_from_battle() -> void:
+	current_state = all_states.IDLE
+	chat_detection_collision_shape_2d.set_deferred("disabled", false)
+	collision_shape_2d.set_deferred("disabled", false)
 
 func interact() -> bool:
 	if current_state == all_states.IDLE:
@@ -85,6 +104,7 @@ func take_damage(value: int) -> void:
 	if not shield_is_up:
 		if health > 0:
 			health -= value
+			set_stats()
 
 func defend() -> void:
 	shield_is_up = true
