@@ -17,18 +17,22 @@ var items_to_receive: Dictionary = {
 	"big_key": preload("res://assets/sprites/environment/rooms/room_type_1/big_key.png")
 }
 
-
 func _ready() -> void:
 	SignalHandler.start_dialogue.connect(_on_start_dialogue)
 	SignalHandler.enemy_lost_battle.connect(_on_enemy_lost_battle)
 	hide_textbox()
 
 func _unhandled_input(_event: InputEvent) -> void:
-	if Input.is_action_just_pressed("accept"):
-		if GameManager.is_world():
+	if GameManager.is_world():
+		if Input.is_action_just_pressed("accept"):
 			if dialogue_started:
 				if not options_margin_container.visible:
 					SignalHandler.emit_dialogue_option_selected_signal(-1)
+					get_dialogue_data()
+		elif Input.is_action_just_pressed("escape"):
+			if dialogue_started and DialogueManager.can_dialogue_be_skipped():
+				if self.visible and npc_speaking_to:
+					SignalHandler.emit_dialogue_skipped_signal()
 					get_dialogue_data()
 
 func _on_start_dialogue(npc: CharacterBody2D) -> void:
@@ -40,6 +44,7 @@ func _on_enemy_lost_battle() -> void:
 	if GameManager.get_enemy_to_battle().get_npc_name() == DialogueManager.current_npc_name:
 		if DialogueManager.current_npc_stage_id == 0:
 			GameManager.get_enemy_to_battle().increase_story_stage()
+			##remove all globally assigned values here
 
 func get_dialogue_data() -> void:
 	if dialogue_started:
@@ -49,6 +54,7 @@ func get_dialogue_data() -> void:
 			npc_texture_rect.get_child(0).text = dialogue_content["name"]
 			npc_texture_rect.texture = dialogue_content["face_texture"]
 			last_dialogue_event = dialogue_content["event"]
+			set_textbox_input_options_label()
 			if dialogue_content["options"].size() > 0:
 				show_options_container()
 				if dialogue_content["options"].size() > 1:
@@ -77,8 +83,13 @@ func set_event_action(dialogue_content: Dictionary) -> void:
 			GameManager.get_main_player().equip_key()
 			npc_speaking_to.increase_story_stage()
 		elif last_dialogue_event == "battle":
-			print("enemy to battle: " + str(npc_speaking_to.get_npc_name()))
 			GameManager.set_enemy_to_battle(npc_speaking_to)
+
+func set_textbox_input_options_label() -> void:
+	if DialogueManager.can_dialogue_be_skipped():
+		end.text = "[Enter]\nContinue\n\n[ESC]\nSkip"
+	else:
+		end.text = "[Enter]\nContinue"
 
 func show_textbox() -> void:
 	self.show()

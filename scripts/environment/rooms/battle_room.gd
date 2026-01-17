@@ -8,7 +8,7 @@ var the_tween: Tween
 
 const FIRST_DELAY_ON_BATTLE_START: int = 1
 
-enum room_state{DELAY, PLAYER_SELECT_TASK, ENEMY_SELECT_TASK, CHALLENGE, PLAYER_CHALLENGE, ENEMY_CHALLENGE, PLAYER_LOST, ENEMY_LOST}
+enum room_state{DELAY, PLAYER_SELECT_TASK, ENEMY_SELECT_TASK, CHALLENGE, PLAYER_CHALLENGE, ENEMY_CHALLENGE, PLAYER_LOST, ENEMY_LOST, SPARE}
 var current_room_state: room_state = room_state.DELAY
 
 var player_character_task: GameManager.character_battle_tasks = GameManager.character_battle_tasks.ATTACK
@@ -30,10 +30,14 @@ func _on_player_selected_battle_option(id: int) -> void:
 	match id:
 		GameManager.character_battle_tasks.ATTACK:
 			player_character_task = GameManager.character_battle_tasks.ATTACK
+			GameManager.get_main_player().attack()
 		GameManager.character_battle_tasks.DEFEND:
 			player_character_task = GameManager.character_battle_tasks.DEFEND
+			GameManager.get_main_player().defend()
 		GameManager.character_battle_tasks.SPARE:
-			player_character_task = GameManager.character_battle_tasks.SPARE
+			current_room_state = room_state.SPARE
+			GameManager.current_game_state = GameManager.all_game_state.SPARED_FROM_BATTLE
+			SignalHandler.emit_battle_spared_signal()
 	launch_timer(FIRST_DELAY_ON_BATTLE_START)
 
 func _on_half_way_returning_from_battle() -> void:
@@ -49,6 +53,8 @@ func enable_battle_stage() -> void:
 
 func disable_battle_stage() -> void:
 	camera_2d.enabled = false
+	if the_tween:
+		the_tween.kill()
 
 func get_player_transition_attack_point() -> Vector2:
 	var return_value: Vector2 = Vector2.ZERO
@@ -73,6 +79,10 @@ func allow_player_select_task() -> void:
 func allow_enemy_select_task() -> void:
 	current_room_state = room_state.ENEMY_SELECT_TASK
 	enemy_character_task = GameManager.get_enemy_to_battle().select_random_task()
+	if enemy_character_task == GameManager.character_battle_tasks.ATTACK:
+		GameManager.get_enemy_to_battle().attack()
+	elif enemy_character_task == GameManager.character_battle_tasks.DEFEND:
+		GameManager.get_enemy_to_battle().defend()
 	launch_timer(FIRST_DELAY_ON_BATTLE_START)
 
 func prepare_to_fight() -> void:
@@ -82,13 +92,20 @@ func prepare_to_fight() -> void:
 
 func player_performs_task() -> void:
 	current_room_state = room_state.PLAYER_CHALLENGE
-	player_waiting_to_attack = true
-	tween_character_for_attack()
+	if player_character_task == GameManager.character_battle_tasks.ATTACK:
+		player_waiting_to_attack = true
+		tween_character_for_attack()
+	elif player_character_task == GameManager.character_battle_tasks.DEFEND:
+		launch_timer(FIRST_DELAY_ON_BATTLE_START)
 
 func enemy_performs_task() -> void:
 	current_room_state = room_state.ENEMY_CHALLENGE
-	enemy_waiting_to_attack = true
-	tween_enemy_for_attack()
+	if enemy_character_task == GameManager.character_battle_tasks.ATTACK:
+		enemy_waiting_to_attack = true
+		tween_enemy_for_attack()
+	elif enemy_character_task == GameManager.character_battle_tasks.DEFEND:
+		
+		launch_timer(FIRST_DELAY_ON_BATTLE_START)
 
 func check_enemy_stats() -> void:
 	if check_enemy_health():
@@ -163,6 +180,8 @@ func check_player_health() -> bool:
 	return false
 
 func battle_loop() -> void:
+	GameManager.get_main_player().remove_shield()
+	GameManager.get_enemy_to_battle().remove_shield()
 	current_room_state = room_state.DELAY
 	launch_timer(FIRST_DELAY_ON_BATTLE_START)
 

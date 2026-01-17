@@ -10,9 +10,11 @@ extends CharacterBody2D
 @onready var camera_2d: Camera2D = $Camera2D
 @onready var stats_label: Label = $PocketVBoxContainer/StatsLabel
 @onready var collision_shape_2d: CollisionShape2D = $CollisionShape2D
+@onready var battle_action_label: Label = $PocketVBoxContainer/BattleActionLabel
 
 var battle_room: Node2D
 
+var default_health_value: int
 var last_world_position: Vector2 = Vector2.ZERO
 var direction: Vector2 = Vector2.ZERO
 var last_direction: Vector2 = Vector2.ZERO
@@ -40,6 +42,7 @@ func _ready() -> void:
 	SignalHandler.finished_returning_from_battle.connect(_on_finished_returning_from_battle)
 	SignalHandler.half_way_returning_from_battle.connect(_on_half_way_returning_from_battle)
 	current_state = state.IDLE
+	default_health_value = health
 	key_picked_sprite_2d.hide()
 	set_player_name_globally()
 	set_stats()
@@ -80,6 +83,8 @@ func _on_half_way_returning_from_battle() -> void:
 func _on_finished_returning_from_battle() -> void:
 	current_state = state.IDLE
 	collision_shape_2d.set_deferred("disabled", false)
+	if key_is_equipped:
+		key_picked_sprite_2d.show()
 
 func _input(event: InputEvent) -> void:
 	if current_state == state.IDLE:
@@ -222,8 +227,13 @@ func drop_key() -> void:
 
 func prepare_for_battle() -> void:
 	current_state = state.STOPPED
+	health = default_health_value
+	set_stats()
 	last_world_position = self.global_position
 	collision_shape_2d.set_deferred("disabled", true)
+	last_direction = Vector2(1,0)
+	set_current_animation(Vector2.ZERO)
+	key_picked_sprite_2d.hide()
 
 func go_for_battle() ->  void:
 	current_state = state.BATTLE
@@ -232,7 +242,8 @@ func set_battle_room(the_room: Node2D) -> void:
 	battle_room = the_room
 
 func attack() -> void:
-	pass
+	battle_action_label.show()
+	battle_action_label.text = "ATTACKING"
 
 func get_health() -> int:
 	return health
@@ -248,18 +259,19 @@ func take_damage(value: int) -> void:
 
 func defend() -> void:
 	shield_is_up = true
+	battle_action_label.show()
+	battle_action_label.text = "DEFENDING"
 
 func remove_shield() -> void:
 	shield_is_up = false
-
-func spare() -> void:
-	pass
+	battle_action_label.hide()
 
 func show_stats() -> void:
 	stats_label.show()
 
 func hide_stats() -> void:
 	stats_label.hide()
+	battle_action_label.hide()
 
 func set_stats() -> void:
 	stats_label.text = "H: " + str(health) + " D: " + str(damage) + " S: " + str(shield)

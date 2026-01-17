@@ -160,8 +160,12 @@ autowrap_mode = 2
 layout_mode = 2
 size_flags_horizontal = 8
 size_flags_vertical = 8
-theme_override_font_sizes/font_size = 30
-text = "[Enter]"
+theme_override_font_sizes/font_size = 15
+text = "[Enter]
+Continue
+
+[ESC]
+Skip"
 
 [node name="OptionsMarginContainer" type="MarginContainer" parent="."]
 visible = false

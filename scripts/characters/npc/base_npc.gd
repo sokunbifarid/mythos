@@ -10,12 +10,14 @@ extends CharacterBody2D
 @onready var stats_label: Label = $PocketVBoxContainer/StatsLabel
 @onready var chat_detection_collision_shape_2d: CollisionShape2D = $chat_detection_area/CollisionShape2D
 @onready var collision_shape_2d: CollisionShape2D = $CollisionShape2D
+@onready var battle_action_label: Label = $PocketVBoxContainer/BattleActionLabel
 
 var battle_room: Node2D
 
 enum all_states{STOPPED, IDLE, CHATTING, BATTLE}
 var current_state: all_states = all_states.IDLE
 
+var default_health_value: int
 var player_in_range = false
 var shield_is_up: bool = false
 var last_world_position: Vector2 = Vector2.ZERO
@@ -27,6 +29,7 @@ func _ready() -> void:
 	SignalHandler.gather_battle_data.connect(_on_gather_battle_data)
 	SignalHandler.half_way_returning_from_battle.connect(_on_half_way_returning_from_battle)
 	SignalHandler.finished_returning_from_battle.connect(_on_finished_returning_from_battle)
+	default_health_value = health
 	interact_label.hide()
 	animated_sprite_2d.play("idle")
 	hide_stats()
@@ -39,6 +42,8 @@ func _on_preparing_to_go_for_battle() -> void:
 	last_world_position = self.global_position
 	chat_detection_collision_shape_2d.set_deferred("disabled", true)
 	collision_shape_2d.set_deferred("disabled", true)
+	health = default_health_value
+	set_stats()
 
 func _on_gather_battle_data() -> void:
 	current_state = all_states.BATTLE
@@ -98,7 +103,8 @@ func get_damage() -> int:
 	return damage
 
 func attack() -> void:
-	pass
+	battle_action_label.show()
+	battle_action_label.text = "ATTACKING"
 
 func take_damage(value: int) -> void:
 	if not shield_is_up:
@@ -108,9 +114,12 @@ func take_damage(value: int) -> void:
 
 func defend() -> void:
 	shield_is_up = true
+	battle_action_label.show()
+	battle_action_label.text = "DEFENDING"
 
 func remove_shield() -> void:
 	shield_is_up = false
+	battle_action_label.hide()
 
 func allow_spare() -> bool:
 	return true
@@ -120,10 +129,11 @@ func show_stats() -> void:
 
 func hide_stats() -> void:
 	stats_label.hide()
+	battle_action_label.hide()
 
 func select_random_task() -> GameManager.character_battle_tasks:
-	var random_selection: int = randi_range(0, GameManager.character_battle_tasks.size() - 2)
-	if random_selection == 0:
+	var random_selection: int = randi_range(0, 10)
+	if random_selection <= 6:
 		return GameManager.character_battle_tasks.ATTACK
 	return GameManager.character_battle_tasks.DEFEND
 

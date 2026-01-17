@@ -5,7 +5,8 @@ extends Control
 @onready var battle_result_panel: Panel = $BattleUI/BattleResultPanel
 @onready var you_win_battle_result_label: Label = $BattleUI/BattleResultPanel/YouWinBattleResultLabel
 @onready var you_lost_battle_result_label: Label = $BattleUI/BattleResultPanel/YouLostBattleResultLabel
-@onready var attack_button: Button = $BattleUI/PlayerInputPanel/BattleUIGridContainer/AttackButton
+@onready var attack_button: Button = $BattleUI/PlayerInputPanel/VBoxContainer/BattleUIGridContainer/AttackButton
+@onready var spared_battle_result_label: Label = $BattleUI/BattleResultPanel/SparedBattleResultLabel
 
 func _ready() -> void:
 	SignalHandler.preparing_to_go_for_battle.connect(_on_preparing_to_go_for_battle)
@@ -15,6 +16,7 @@ func _ready() -> void:
 	SignalHandler.player_lost_battle.connect(_on_player_lost_battle)
 	SignalHandler.enemy_lost_battle.connect(_on_enemy_lost_battle)
 	SignalHandler.half_way_returning_from_battle.connect(_on_half_way_returning_from_battle)
+	SignalHandler.battle_spared.connect(_on_battle_spared)
 	battle_margin_container.hide()
 	player_input_panel.hide()
 	hide_battle_result()
@@ -55,6 +57,9 @@ func _on_enemy_lost_battle() -> void:
 func _on_half_way_returning_from_battle() -> void:
 	hide_battle_result()
 
+func _on_battle_spared() -> void:
+	show_game_spared()
+
 func hide_battle_result() -> void:
 	battle_result_panel.hide()
 
@@ -62,8 +67,16 @@ func show_player_win_battle_result() -> void:
 	battle_result_panel.show()
 	you_win_battle_result_label.show()
 	you_lost_battle_result_label.hide()
+	spared_battle_result_label.hide()
 
 func show_player_lost_battle_result() -> void:
 	battle_result_panel.show()
 	you_win_battle_result_label.hide()
 	you_lost_battle_result_label.show()
+	spared_battle_result_label.hide()
+
+func show_game_spared() -> void:
+	battle_result_panel.show()
+	spared_battle_result_label.show()
+	you_win_battle_result_label.hide()
+	you_lost_battle_result_label.hide()

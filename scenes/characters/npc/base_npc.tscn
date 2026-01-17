@@ -34,22 +34,28 @@ shape = SubResource("CapsuleShape2D_doalm")
 
 [node name="PocketVBoxContainer" type="VBoxContainer" parent="."]
 offset_left = -37.0
-offset_top = -81.0
+offset_top = -105.0
 offset_right = 38.0
-offset_bottom = -49.0
-alignment = 1
+offset_bottom = -67.0
+alignment = 2
 
 [node name="InteractLabel" type="Label" parent="PocketVBoxContainer"]
+visible = false
 layout_mode = 2
 theme_override_font_sizes/font_size = 12
 text = "[E] INTERACT"
 horizontal_alignment = 1
 
+[node name="BattleActionLabel" type="Label" parent="PocketVBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "ATTACKING"
+horizontal_alignment = 1
+
 [node name="StatsLabel" type="Label" parent="PocketVBoxContainer"]
-visible = false
 layout_mode = 2
 theme_override_constants/outline_size = 3
-theme_override_font_sizes/font_size = 7
+theme_override_font_sizes/font_size = 10
 text = "H: 4 D: 2 S: 2"
 horizontal_alignment = 1
 

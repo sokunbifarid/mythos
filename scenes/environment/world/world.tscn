@@ -8,7 +8,7 @@
 [ext_resource type="Texture2D" uid="uid://dv51ol6f541sm" path="res://assets/sprites/objects/big_sword.png" id="5_kw2i0"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_wvuop"]
-bg_color = Color(0.7462787, 0.68209994, 0.58879924, 1)
+bg_color = Color(0.9192344, 0.5862062, 0.59410757, 1)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_c658y"]
 bg_color = Color(0.48235294, 0.42352942, 0.3372549, 1)
@@ -68,6 +68,21 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+
+[node name="ToDOLabel" type="Label" parent="CanvasLayer/GameUI/HUD/HUDPopups"]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -453.0
+offset_top = 16.0
+offset_right = -8.0
+offset_bottom = 117.0
+grow_horizontal = 0
+text = "- Speak to adventurer in room 1 to learn controls
+- Collect key from wizard in room 2 for locked brown door
+- Pickup key from room 3
+- Challenge cat man in room3"
 
 [node name="BattleMarginContainer" type="Panel" parent="CanvasLayer/GameUI/HUD/HUDPopups"]
 visible = false
@@ -132,14 +147,14 @@ anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_left = -224.0
-offset_top = -124.0
+offset_top = -157.0
 offset_right = -24.0
 offset_bottom = -24.0
 grow_horizontal = 0
 grow_vertical = 0
 theme_override_styles/panel = SubResource("StyleBoxFlat_wvuop")
 
-[node name="BattleUIGridContainer" type="GridContainer" parent="CanvasLayer/GameUI/HUD/BattleUI/PlayerInputPanel"]
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/GameUI/HUD/BattleUI/PlayerInputPanel"]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -147,37 +162,49 @@ anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
 offset_left = -80.0
-offset_top = -35.0
+offset_top = -48.5
 offset_right = 80.0
-offset_bottom = 35.0
+offset_bottom = 48.5
 grow_horizontal = 2
 grow_vertical = 2
+
+[node name="SelectOptionLabel" type="Label" parent="CanvasLayer/GameUI/HUD/BattleUI/PlayerInputPanel/VBoxContainer"]
+layout_mode = 2
+text = "SELECT OPTION"
+horizontal_alignment = 1
+
+[node name="BattleUIGridContainer" type="GridContainer" parent="CanvasLayer/GameUI/HUD/BattleUI/PlayerInputPanel/VBoxContainer"]
+layout_mode = 2
 theme_override_constants/h_separation = 20
 theme_override_constants/v_separation = 10
 columns = 2
 
-[node name="AttackButton" type="Button" parent="CanvasLayer/GameUI/HUD/BattleUI/PlayerInputPanel/BattleUIGridContainer"]
+[node name="AttackButton" type="Button" parent="CanvasLayer/GameUI/HUD/BattleUI/PlayerInputPanel/VBoxContainer/BattleUIGridContainer"]
 custom_minimum_size = Vector2(70, 30)
 layout_mode = 2
 theme_override_styles/normal = SubResource("StyleBoxFlat_c658y")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_kw2i0")
+theme_override_styles/focus = SubResource("StyleBoxFlat_kw2i0")
 text = "ATTACK"
 
-[node name="DefendButton" type="Button" parent="CanvasLayer/GameUI/HUD/BattleUI/PlayerInputPanel/BattleUIGridContainer"]
+[node name="DefendButton" type="Button" parent="CanvasLayer/GameUI/HUD/BattleUI/PlayerInputPanel/VBoxContainer/BattleUIGridContainer"]
 custom_minimum_size = Vector2(70, 30)
 layout_mode = 2
 theme_override_styles/normal = SubResource("StyleBoxFlat_iprp0")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_gi1ku")
+theme_override_styles/focus = SubResource("StyleBoxFlat_kw2i0")
 text = "DEFEND"
 
-[node name="SpareButton" type="Button" parent="CanvasLayer/GameUI/HUD/BattleUI/PlayerInputPanel/BattleUIGridContainer"]
+[node name="SpareButton" type="Button" parent="CanvasLayer/GameUI/HUD/BattleUI/PlayerInputPanel/VBoxContainer/BattleUIGridContainer"]
 custom_minimum_size = Vector2(70, 30)
 layout_mode = 2
 theme_override_styles/normal = SubResource("StyleBoxFlat_iprp0")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_gi1ku")
-text = "DEFEND"
+theme_override_styles/focus = SubResource("StyleBoxFlat_kw2i0")
+text = "SPARE"
 
 [node name="BattleResultPanel" type="Panel" parent="CanvasLayer/GameUI/HUD/BattleUI"]
+visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -220,6 +247,24 @@ theme_override_colors/font_color = Color(0.8745867, 0.37003967, 0.3759533, 1)
 theme_override_font_sizes/font_size = 32
 text = "YOU LOST"
 
+[node name="SparedBattleResultLabel" type="Label" parent="CanvasLayer/GameUI/HUD/BattleUI/BattleResultPanel"]
+visible = false
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -70.5
+offset_top = -22.5
+offset_right = 70.5
+offset_bottom = 22.5
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.18772593, 0.57045215, 0.9169015, 1)
+theme_override_font_sizes/font_size = 32
+text = "SPARED"
+
 [node name="TransitionUI" type="Control" parent="CanvasLayer/GameUI"]
 z_index = 1
 layout_mode = 1
@@ -238,6 +283,6 @@ anchors_preset = 0
 offset_right = 40.0
 offset_bottom = 40.0
 
-[connection signal="pressed" from="CanvasLayer/GameUI/HUD/BattleUI/PlayerInputPanel/BattleUIGridContainer/AttackButton" to="CanvasLayer/GameUI/HUD" method="_on_attack_button_pressed"]
-[connection signal="pressed" from="CanvasLayer/GameUI/HUD/BattleUI/PlayerInputPanel/BattleUIGridContainer/DefendButton" to="CanvasLayer/GameUI/HUD" method="_on_defend_button_pressed"]
-[connection signal="pressed" from="CanvasLayer/GameUI/HUD/BattleUI/PlayerInputPanel/BattleUIGridContainer/SpareButton" to="CanvasLayer/GameUI/HUD" method="_on_spare_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/GameUI/HUD/BattleUI/PlayerInputPanel/VBoxContainer/BattleUIGridContainer/AttackButton" to="CanvasLayer/GameUI/HUD" method="_on_attack_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/GameUI/HUD/BattleUI/PlayerInputPanel/VBoxContainer/BattleUIGridContainer/DefendButton" to="CanvasLayer/GameUI/HUD" method="_on_defend_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/GameUI/HUD/BattleUI/PlayerInputPanel/VBoxContainer/BattleUIGridContainer/SpareButton" to="CanvasLayer/GameUI/HUD" method="_on_spare_button_pressed"]

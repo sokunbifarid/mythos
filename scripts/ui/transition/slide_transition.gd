@@ -9,6 +9,7 @@ func _ready() -> void:
 	SignalHandler.preparing_to_go_for_battle.connect(_on_preparing_to_go_for_battle)
 	SignalHandler.player_lost_battle.connect(_on_battle_over)
 	SignalHandler.enemy_lost_battle.connect(_on_battle_over)
+	SignalHandler.battle_spared.connect(_on_battle_spared)
 
 func _on_player_using_door(_the_door: Node2D, _the_player: CharacterBody2D) -> void:
 	animation_player.play("slide_in")
@@ -19,6 +20,10 @@ func _on_preparing_to_go_for_battle() -> void:
 	animation_player.play("slide_in")
 
 func _on_battle_over() -> void:
+	await get_tree().create_timer(1.0).timeout
+	animation_player.play("slide_in")
+
+func _on_battle_spared() -> void:
 	await get_tree().create_timer(1.0).timeout
 	animation_player.play("slide_in")
 
@@ -35,7 +40,7 @@ func _process(_delta: float) -> void:
 				if animation_player.current_animation_position > animation_player.current_animation_length / 2:
 					slide_in_animation_half_way = true
 					SignalHandler.emit_gather_battle_data_signal()
-	elif GameManager.is_return_from_battle():
+	elif GameManager.is_return_from_battle() or GameManager.is_spared_from_battle():
 		if animation_player.current_animation == "slide_in":
 			if not slide_in_animation_half_way:
 				if animation_player.current_animation_position > animation_player.current_animation_length / 2:
@@ -58,7 +63,7 @@ func _on_animation_player_animation_finished(anim_name: StringName) -> void:
 		elif anim_name == "slide_out":
 			SignalHandler.emit_start_battle_signal()
 
-	elif GameManager.is_return_from_battle():
+	elif GameManager.is_return_from_battle() or GameManager.is_spared_from_battle():
 		if anim_name == "slide_in":
 			animation_player.play("slide_out")
 			slide_in_animation_half_way = false

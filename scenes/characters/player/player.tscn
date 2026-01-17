@@ -594,13 +594,20 @@ region_enabled = true
 region_rect = Rect2(48, 0, 16, 8)
 
 [node name="PocketVBoxContainer" type="VBoxContainer" parent="."]
-offset_left = -21.0
-offset_top = -33.0
-offset_right = 21.0
-offset_bottom = -22.0
+offset_left = -30.0
+offset_top = -60.0
+offset_right = 29.0
+offset_bottom = -28.0
+alignment = 2
 
 [node name="StatsLabel" type="Label" parent="PocketVBoxContainer"]
 layout_mode = 2
 theme_override_constants/outline_size = 3
-theme_override_font_sizes/font_size = 7
+theme_override_font_sizes/font_size = 10
 text = "H: 4 D: 2 S: 2"
+
+[node name="BattleActionLabel" type="Label" parent="PocketVBoxContainer"]
+layout_mode = 2
+theme_override_constants/outline_size = 3
+theme_override_font_sizes/font_size = 10
+text = "ATTACKING"
