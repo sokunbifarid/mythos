@@ -18,6 +18,8 @@ signal half_way_returning_from_battle
 signal finished_returning_from_battle
 signal dialogue_skipped
 signal battle_spared
+signal battle_room_initiator
+signal set_damage_value
 
 func emit_slide_transition_half_completed_signal() -> void:
 	slide_transition_half_completed.emit()
@@ -73,3 +75,10 @@ func emit_dialogue_skipped_signal() -> void:
 
 func emit_battle_spared_signal() -> void:
 	battle_spared.emit()
+
+func emit_battle_room_initiator_signal() -> void:
+	battle_room_initiator.emit()
+
+#use this for the fight slider
+func emit_set_damage_value_signal(value: int) -> void:
+	set_damage_value.emit(value)

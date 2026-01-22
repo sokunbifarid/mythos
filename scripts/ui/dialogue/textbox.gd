@@ -23,7 +23,7 @@ func _ready() -> void:
 	hide_textbox()
 
 func _unhandled_input(_event: InputEvent) -> void:
-	if GameManager.is_world():
+	if self.visible:#GameManager.is_battle():#is_world():
 		if Input.is_action_just_pressed("accept"):
 			if dialogue_started:
 				if not options_margin_container.visible:
@@ -74,16 +74,22 @@ func set_event_action(dialogue_content: Dictionary) -> void:
 	if not dialogue_content:
 		if last_dialogue_event == "completed":
 			npc_speaking_to.increase_story_stage()
+			SignalHandler.emit_battle_room_initiator_signal()
 		elif last_dialogue_event == "battle":
-			SignalHandler.emit_preparing_to_go_for_battle_signal()
+			#SignalHandler.emit_preparing_to_go_for_battle_signal()
+			SignalHandler.emit_battle_room_initiator_signal()
+		elif last_dialogue_event == "none":
+			SignalHandler.emit_battle_room_initiator_signal()
+		elif last_dialogue_event == "give_big_key":
+			SignalHandler.emit_battle_room_initiator_signal()
 	else:
 		if last_dialogue_event == "give_big_key":
 			item_received_texture_rect.show()
 			item_received_texture_rect.texture = items_to_receive["big_key"]
 			GameManager.get_main_player().equip_key()
 			npc_speaking_to.increase_story_stage()
-		elif last_dialogue_event == "battle":
-			GameManager.set_enemy_to_battle(npc_speaking_to)
+		#elif last_dialogue_event == "battle":
+			#GameManager.set_enemy_to_battle(npc_speaking_to)
 
 func set_textbox_input_options_label() -> void:
 	if DialogueManager.can_dialogue_be_skipped():
@@ -123,14 +129,14 @@ func hide_options_container() -> void:
 	option_2_button.release_focus()
 
 func _on_option_1_button_pressed() -> void:
-	if GameManager.is_world():
+	if options_margin_container.visible:#GameManager.is_world():
 		if dialogue_started:
 			hide_options_container()
 			SignalHandler.emit_dialogue_option_selected_signal(0)
 			get_dialogue_data()
 
 func _on_option_2_button_pressed() -> void:
-	if GameManager.is_world():
+	if options_margin_container.visible:#GameManager.is_world():
 		if dialogue_started:
 			hide_options_container()
 			SignalHandler.emit_dialogue_option_selected_signal(1)

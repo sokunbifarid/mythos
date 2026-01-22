@@ -4,15 +4,17 @@ extends CharacterBody2D
 @export var player_name: String = "Reggie"
 @export var health: int = 4
 @export var shield: int = 2
-@export var damage: int = 2
+@export var damage: int = 0
 @onready var animated_sprite_2d_node: AnimatedSprite2D = $AnimatedSprite2D
 @onready var key_picked_sprite_2d: Sprite2D = $PickedObjects/KeyPickedSprite2D
 @onready var camera_2d: Camera2D = $Camera2D
-@onready var stats_label: Label = $PocketVBoxContainer/StatsLabel
 @onready var collision_shape_2d: CollisionShape2D = $CollisionShape2D
-@onready var battle_action_label: Label = $PocketVBoxContainer/BattleActionLabel
+@onready var stats_label: Label = $PlayerData/PocketVBoxContainer/StatsLabel
+@onready var battle_action_label: Label = $PlayerData/PocketVBoxContainer/BattleActionLabel
+@onready var damage_label: Label = $PlayerData/DamageLabel
 
 var battle_room: Node2D
+var the_tween: Tween
 
 var default_health_value: int
 var last_world_position: Vector2 = Vector2.ZERO
@@ -28,6 +30,9 @@ var key_is_equipped: bool = false
 const SPEED = 100.0
 const CLIMB_SPEED = 60
 var shield_is_up: bool = false
+var attacking: bool = false
+
+const MAX_DAMAGE: int = 4
 
 enum state{STOPPED, IDLE, INTERACTING, CLIMBING_LADDER, USING_DOOR, BATTLE}
 var current_state: state = state.STOPPED
@@ -41,6 +46,7 @@ func _ready() -> void:
 	SignalHandler.gather_battle_data.connect(_on_gather_battle_data)
 	SignalHandler.finished_returning_from_battle.connect(_on_finished_returning_from_battle)
 	SignalHandler.half_way_returning_from_battle.connect(_on_half_way_returning_from_battle)
+	SignalHandler.set_damage_value.connect(_on_set_damage_value)
 	current_state = state.IDLE
 	default_health_value = health
 	key_picked_sprite_2d.hide()
@@ -70,6 +76,8 @@ func _on_start_battle() -> void:
 
 func _on_gather_battle_data() -> void:
 	camera_2d.enabled = false
+	last_direction = Vector2(0, -1)
+	set_current_animation(Vector2.ZERO)
 	show_stats()
 
 func _on_half_way_returning_from_battle() -> void:
@@ -79,12 +87,16 @@ func _on_half_way_returning_from_battle() -> void:
 		camera_2d.enabled = true
 		hide_stats()
 		body_to_interact_with = null
+		reset_scale()
 
 func _on_finished_returning_from_battle() -> void:
 	current_state = state.IDLE
 	collision_shape_2d.set_deferred("disabled", false)
 	if key_is_equipped:
 		key_picked_sprite_2d.show()
+
+func _on_set_damage_value(value: int) -> void:
+	set_damage(value)
 
 func _input(event: InputEvent) -> void:
 	if current_state == state.IDLE:
@@ -93,17 +105,17 @@ func _input(event: InputEvent) -> void:
 				current_state = state.INTERACTING
 
 func _physics_process(_delta: float) -> void:
+	handle_movement()
+	handle_ladder_use()
+	handle_door_use()
 	if current_state == state.IDLE or current_state == state.CLIMBING_LADDER:
 		direction = Input.get_vector("move_left", "move_right", "move_forward", "move_backward")
 		direction.x = round(direction.x)
 		direction.y = round(direction.y)
+		move_and_slide()
 	else:
 		direction = Vector2.ZERO
 		set_current_animation(direction)
-	handle_movement()
-	handle_ladder_use()
-	handle_door_use()
-	move_and_slide()
 
 func handle_movement():
 	if current_state == state.IDLE:
@@ -147,38 +159,39 @@ func handle_door_use() -> void:
 						drop_key()
 
 func set_current_animation(dir: Vector2) -> void:
-	if dir.length() == 0:
-		if last_direction == Vector2(0,1):
-			if animated_sprite_2d_node.animation != "idle_down":
-				animated_sprite_2d_node.play("idle_down")
-		elif last_direction == Vector2(0, -1):
-			if animated_sprite_2d_node.animation != "idle_up":
-				animated_sprite_2d_node.play("idle_up")
-		elif last_direction == Vector2(1, 0) or last_direction == Vector2(1,1) or last_direction == Vector2(1,-1):
-			if animated_sprite_2d_node.animation != "idle_right":
-				animated_sprite_2d_node.play("idle_right")
-		elif last_direction == Vector2(-1, 0) or last_direction == Vector2(-1,1) or last_direction == Vector2(-1,-1):
-			if animated_sprite_2d_node.animation != "idle_left":
-				animated_sprite_2d_node.play("idle_left")
+	if not attacking:
+		if dir.length() == 0:
+			if last_direction == Vector2(0,1):
+				if animated_sprite_2d_node.animation != "idle_down":
+					animated_sprite_2d_node.play("idle_down")
+			elif last_direction == Vector2(0, -1):
+				if animated_sprite_2d_node.animation != "idle_up":
+					animated_sprite_2d_node.play("idle_up")
+			elif last_direction == Vector2(1, 0) or last_direction == Vector2(1,1) or last_direction == Vector2(1,-1):
+				if animated_sprite_2d_node.animation != "idle_right":
+					animated_sprite_2d_node.play("idle_right")
+			elif last_direction == Vector2(-1, 0) or last_direction == Vector2(-1,1) or last_direction == Vector2(-1,-1):
+				if animated_sprite_2d_node.animation != "idle_left":
+					animated_sprite_2d_node.play("idle_left")
+			else:
+				if animated_sprite_2d_node.animation != "idle_down":
+					animated_sprite_2d_node.play("idle_down")
 		else:
-			if animated_sprite_2d_node.animation != "idle_down":
-				animated_sprite_2d_node.play("idle_down")
-	else:
-		if dir == Vector2(0,1):
-			if animated_sprite_2d_node.animation != "run_down":
-				animated_sprite_2d_node.play("run_down")
-		elif dir == Vector2(0, -1):
-			if animated_sprite_2d_node.animation != "run_up":
-				animated_sprite_2d_node.play("run_up")
-		elif dir == Vector2(1, 0) or dir == Vector2(1,1) or dir == Vector2(1,-1):
-			if animated_sprite_2d_node.animation != "run_right":
-				animated_sprite_2d_node.play("run_right")
-		elif dir == Vector2(-1, 0) or dir == Vector2(-1,1) or dir == Vector2(-1,-1):
-			if animated_sprite_2d_node.animation != "run_left":
-				animated_sprite_2d_node.play("run_left")
-		else:
-			if animated_sprite_2d_node.animation != "idle_down":
-				animated_sprite_2d_node.play("idle_down")
+			if dir == Vector2(0,1):
+				if animated_sprite_2d_node.animation != "run_down":
+					animated_sprite_2d_node.play("run_down")
+			elif dir == Vector2(0, -1):
+				if animated_sprite_2d_node.animation != "run_up":
+					animated_sprite_2d_node.play("run_up")
+			elif dir == Vector2(1, 0) or dir == Vector2(1,1) or dir == Vector2(1,-1):
+				if animated_sprite_2d_node.animation != "run_right":
+					animated_sprite_2d_node.play("run_right")
+			elif dir == Vector2(-1, 0) or dir == Vector2(-1,1) or dir == Vector2(-1,-1):
+				if animated_sprite_2d_node.animation != "run_left":
+					animated_sprite_2d_node.play("run_left")
+			else:
+				if animated_sprite_2d_node.animation != "idle_down":
+					animated_sprite_2d_node.play("idle_down")
 
 func set_body_to_interact_with(body) -> void:
 	if body:
@@ -228,22 +241,40 @@ func drop_key() -> void:
 func prepare_for_battle() -> void:
 	current_state = state.STOPPED
 	health = default_health_value
+	damage = 0
 	set_stats()
 	last_world_position = self.global_position
 	collision_shape_2d.set_deferred("disabled", true)
-	last_direction = Vector2(1,0)
-	set_current_animation(Vector2.ZERO)
+	#last_direction = Vector2(0, -1)
+	#set_current_animation(Vector2.ZERO)
 	key_picked_sprite_2d.hide()
+
+func set_battle_scale() -> void:
+	animated_sprite_2d_node.scale = Vector2(2,2)
+
+func reset_scale() -> void:
+	self.scale = Vector2(1,1)
+	animated_sprite_2d_node.scale = Vector2(1,1)
 
 func go_for_battle() ->  void:
 	current_state = state.BATTLE
 
 func set_battle_room(the_room: Node2D) -> void:
-	battle_room = the_room
+	if not battle_room:
+		battle_room = the_room
 
 func attack() -> void:
 	battle_action_label.show()
 	battle_action_label.text = "ATTACKING"
+
+func play_attack_effect() -> void:
+	attacking = true
+	animated_sprite_2d_node.play("attack_up")
+
+func set_damage(value: int) -> void:
+	damage = value
+	damage = clampi(damage, 0, MAX_DAMAGE)
+	set_stats()
 
 func get_health() -> int:
 	return health
@@ -255,6 +286,8 @@ func take_damage(value: int) -> void:
 	if not shield_is_up:
 		if health > 0:
 			health -= value
+			health = clampi(health, 0, default_health_value)
+			tween_damage_label(value)
 			set_stats()
 
 func defend() -> void:
@@ -265,6 +298,8 @@ func defend() -> void:
 func remove_shield() -> void:
 	shield_is_up = false
 	battle_action_label.hide()
+	damage = 0
+	set_stats()
 
 func show_stats() -> void:
 	stats_label.show()
@@ -272,6 +307,31 @@ func show_stats() -> void:
 func hide_stats() -> void:
 	stats_label.hide()
 	battle_action_label.hide()
+	damage_label.hide()
 
 func set_stats() -> void:
 	stats_label.text = "H: " + str(health) + " D: " + str(damage) + " S: " + str(shield)
+
+func tween_damage_label(value: int) -> void:
+	damage_label.show()
+	const DURATION: float = 0.3
+	if value >= 4:
+		damage_label.text = "-" + str(value) + " CRITICAL"
+	else:
+		damage_label.text = "-" + str(value)
+	damage_label.position = Vector2(0, 0)
+	damage_label.self_modulate = Color(1,1,1,1)
+	if the_tween:
+		the_tween.kill()
+	the_tween = create_tween()
+	the_tween.tween_property(damage_label, "position", Vector2(0, -7), DURATION)
+	the_tween.tween_property(damage_label, "self_modulate", Color(1,1,1,0), DURATION / 2)
+	the_tween.finished.connect(_on_the_tween_finished)
+
+func _on_the_tween_finished() -> void:
+	if damage_label.visible:
+		damage_label.hide()
+
+func _on_animated_sprite_2d_animation_finished() -> void:
+	if animated_sprite_2d_node.animation == "attack_up":
+		attacking = false

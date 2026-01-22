@@ -7,7 +7,7 @@ var enemy_to_battle: CharacterBody2D
 enum all_game_state{WORLD, BATTLE, RETURN_FROM_BATTLE, SPARED_FROM_BATTLE}
 var current_game_state: all_game_state = all_game_state.WORLD
 
-enum character_battle_tasks{ATTACK, DEFEND, SPARE}
+enum character_battle_tasks{ATTACK, DEFEND, SPARE, TALK}
 
 func _ready() -> void:
 	SignalHandler.preparing_to_go_for_battle.connect(_on_preparing_to_go_for_battle)

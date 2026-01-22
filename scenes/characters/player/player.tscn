@@ -1,7 +1,8 @@
-[gd_scene load_steps=85 format=3 uid="uid://dplyplo7v4on"]
+[gd_scene load_steps=94 format=3 uid="uid://dplyplo7v4on"]
 
 [ext_resource type="Script" uid="uid://enre5a512gxt" path="res://scripts/characters/player/player.gd" id="1_7uws0"]
 [ext_resource type="Texture2D" uid="uid://bqow00bltr3h0" path="res://assets/sprites/character/player/idle/idle_down.png" id="2_42irl"]
+[ext_resource type="Texture2D" uid="uid://2bky72q77swh" path="res://assets/sprites/character/player/attack 1/attack1_up.png" id="2_djydg"]
 [ext_resource type="Texture2D" uid="uid://c38hs33fjh7ji" path="res://assets/sprites/character/player/idle/idle_left.png" id="3_3xnwo"]
 [ext_resource type="Texture2D" uid="uid://t6jdi2j44pdn" path="res://assets/sprites/character/player/idle/idle_right.png" id="4_djydg"]
 [ext_resource type="Texture2D" uid="uid://c85vfnhr7feoh" path="res://assets/sprites/character/player/idle/idle_up.png" id="5_bsn6e"]
@@ -10,6 +11,38 @@
 [ext_resource type="Texture2D" uid="uid://bv5npxj5bi7wn" path="res://assets/sprites/character/player/run/run_right.png" id="8_ykrpk"]
 [ext_resource type="Texture2D" uid="uid://b4rvvttxdibjf" path="res://assets/sprites/character/player/run/run_up.png" id="9_i1nod"]
 [ext_resource type="Texture2D" uid="uid://bq716jp013xpo" path="res://assets/sprites/environment/rooms/room_type_1/Objects.png" id="10_3xnwo"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4kqyw"]
+atlas = ExtResource("2_djydg")
+region = Rect2(0, 0, 96, 80)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ds8us"]
+atlas = ExtResource("2_djydg")
+region = Rect2(96, 0, 96, 80)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ra07b"]
+atlas = ExtResource("2_djydg")
+region = Rect2(192, 0, 96, 80)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ketpa"]
+atlas = ExtResource("2_djydg")
+region = Rect2(288, 0, 96, 80)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2el0t"]
+atlas = ExtResource("2_djydg")
+region = Rect2(384, 0, 96, 80)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7s1g3"]
+atlas = ExtResource("2_djydg")
+region = Rect2(480, 0, 96, 80)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_kip2f"]
+atlas = ExtResource("2_djydg")
+region = Rect2(576, 0, 96, 80)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vjq2h"]
+atlas = ExtResource("2_djydg")
+region = Rect2(672, 0, 96, 80)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_42irl"]
 atlas = ExtResource("9_i1nod")
@@ -303,6 +336,35 @@ region = Rect2(672, 0, 96, 80)
 animations = [{
 "frames": [{
 "duration": 1.0,
+"texture": SubResource("AtlasTexture_4kqyw")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ds8us")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ra07b")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ketpa")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_2el0t")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_7s1g3")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_kip2f")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_vjq2h")
+}],
+"loop": false,
+"name": &"attack_up",
+"speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
 "texture": SubResource("AtlasTexture_42irl")
 }, {
 "duration": 1.0,
@@ -574,7 +636,9 @@ script = ExtResource("1_7uws0")
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 position = Vector2(0, -11)
 sprite_frames = SubResource("SpriteFrames_ds8us")
-animation = &"climb_ladder"
+animation = &"attack_up"
+frame = 7
+frame_progress = 1.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(0, 2)
@@ -593,21 +657,51 @@ texture = ExtResource("10_3xnwo")
 region_enabled = true
 region_rect = Rect2(48, 0, 16, 8)
 
-[node name="PocketVBoxContainer" type="VBoxContainer" parent="."]
+[node name="PlayerData" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
 offset_left = -30.0
-offset_top = -60.0
-offset_right = 29.0
+offset_top = -68.0
+offset_right = 32.0
 offset_bottom = -28.0
+
+[node name="PocketVBoxContainer" type="VBoxContainer" parent="PlayerData"]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -29.5
+offset_top = -32.0
+offset_right = 29.5
+grow_horizontal = 2
+grow_vertical = 0
 alignment = 2
 
-[node name="StatsLabel" type="Label" parent="PocketVBoxContainer"]
+[node name="StatsLabel" type="Label" parent="PlayerData/PocketVBoxContainer"]
 layout_mode = 2
 theme_override_constants/outline_size = 3
 theme_override_font_sizes/font_size = 10
 text = "H: 4 D: 2 S: 2"
 
-[node name="BattleActionLabel" type="Label" parent="PocketVBoxContainer"]
+[node name="BattleActionLabel" type="Label" parent="PlayerData/PocketVBoxContainer"]
 layout_mode = 2
 theme_override_constants/outline_size = 3
 theme_override_font_sizes/font_size = 10
 text = "ATTACKING"
+
+[node name="DamageLabel" type="Label" parent="PlayerData"]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_top = -16.0
+offset_bottom = -2.0
+grow_horizontal = 2
+theme_override_colors/font_color = Color(0.94, 0, 0, 1)
+theme_override_constants/outline_size = 3
+theme_override_font_sizes/font_size = 10
+text = "-1"
+horizontal_alignment = 1
+
+[connection signal="animation_finished" from="AnimatedSprite2D" to="." method="_on_animated_sprite_2d_animation_finished"]

@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://d35ddhv8fphh3"]
+[gd_scene load_steps=18 format=3 uid="uid://d35ddhv8fphh3"]
 
 [ext_resource type="PackedScene" uid="uid://d1qltpxyk2wsi" path="res://scenes/environment/rooms/room_holder.tscn" id="1_4mnun"]
 [ext_resource type="PackedScene" uid="uid://dplyplo7v4on" path="res://scenes/characters/player/player.tscn" id="2_dc8mk"]
@@ -6,6 +6,8 @@
 [ext_resource type="PackedScene" uid="uid://dviuyach2xrds" path="res://scenes/ui/transition/slide_transition.tscn" id="3_dc8mk"]
 [ext_resource type="PackedScene" uid="uid://clmsynjo4hj64" path="res://scenes/ui/dialogue/textbox.tscn" id="3_kx2wb"]
 [ext_resource type="Texture2D" uid="uid://dv51ol6f541sm" path="res://assets/sprites/objects/big_sword.png" id="5_kw2i0"]
+[ext_resource type="Texture2D" uid="uid://tlvpwypn1k6y" path="res://assets/ui/battle/damage_meter.png" id="6_iprp0"]
+[ext_resource type="Texture2D" uid="uid://bg0sphq80y3wy" path="res://assets/ui/battle/damage_meter_cursor.png" id="7_gi1ku"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_wvuop"]
 bg_color = Color(0.9192344, 0.5862062, 0.59410757, 1)
@@ -21,6 +23,18 @@ bg_color = Color(0.48235294, 0.42352942, 0.3372549, 1)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_gi1ku"]
 bg_color = Color(0.65851617, 0.5912129, 0.49298924, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_uqivg"]
+bg_color = Color(0.48235294, 0.42352942, 0.3372549, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_qtny5"]
+bg_color = Color(0.65851617, 0.5912129, 0.49298924, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hboqg"]
+bg_color = Color(0.65851617, 0.5912129, 0.49298924, 1)
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_wvuop"]
+texture = ExtResource("6_iprp0")
 
 [node name="World" type="Node"]
 
@@ -139,15 +153,14 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="PlayerInputPanel" type="Panel" parent="CanvasLayer/GameUI/HUD/BattleUI"]
-visible = false
 layout_mode = 1
 anchors_preset = 3
 anchor_left = 1.0
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -224.0
-offset_top = -157.0
+offset_left = -177.0
+offset_top = -209.0
 offset_right = -24.0
 offset_bottom = -24.0
 grow_horizontal = 0
@@ -161,10 +174,10 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -80.0
-offset_top = -48.5
-offset_right = 80.0
-offset_bottom = 48.5
+offset_left = -60.5
+offset_top = -79.5
+offset_right = 60.5
+offset_bottom = 79.5
 grow_horizontal = 2
 grow_vertical = 2
 
@@ -173,11 +186,8 @@ layout_mode = 2
 text = "SELECT OPTION"
 horizontal_alignment = 1
 
-[node name="BattleUIGridContainer" type="GridContainer" parent="CanvasLayer/GameUI/HUD/BattleUI/PlayerInputPanel/VBoxContainer"]
+[node name="BattleUIGridContainer" type="VBoxContainer" parent="CanvasLayer/GameUI/HUD/BattleUI/PlayerInputPanel/VBoxContainer"]
 layout_mode = 2
-theme_override_constants/h_separation = 20
-theme_override_constants/v_separation = 10
-columns = 2
 
 [node name="AttackButton" type="Button" parent="CanvasLayer/GameUI/HUD/BattleUI/PlayerInputPanel/VBoxContainer/BattleUIGridContainer"]
 custom_minimum_size = Vector2(70, 30)
@@ -194,6 +204,14 @@ theme_override_styles/normal = SubResource("StyleBoxFlat_iprp0")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_gi1ku")
 theme_override_styles/focus = SubResource("StyleBoxFlat_kw2i0")
 text = "DEFEND"
+
+[node name="TalkButton" type="Button" parent="CanvasLayer/GameUI/HUD/BattleUI/PlayerInputPanel/VBoxContainer/BattleUIGridContainer"]
+custom_minimum_size = Vector2(70, 30)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_uqivg")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_qtny5")
+theme_override_styles/focus = SubResource("StyleBoxFlat_hboqg")
+text = "TALK"
 
 [node name="SpareButton" type="Button" parent="CanvasLayer/GameUI/HUD/BattleUI/PlayerInputPanel/VBoxContainer/BattleUIGridContainer"]
 custom_minimum_size = Vector2(70, 30)
@@ -265,6 +283,37 @@ theme_override_colors/font_color = Color(0.18772593, 0.57045215, 0.9169015, 1)
 theme_override_font_sizes/font_size = 32
 text = "SPARED"
 
+[node name="DamageMeterPanel" type="Panel" parent="CanvasLayer/GameUI/HUD/BattleUI"]
+custom_minimum_size = Vector2(800, 180)
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -400.0
+offset_top = -204.0
+offset_right = 400.0
+offset_bottom = -24.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_styles/panel = SubResource("StyleBoxTexture_wvuop")
+
+[node name="DamageCursorTextureRect" type="TextureRect" parent="CanvasLayer/GameUI/HUD/BattleUI/DamageMeterPanel"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -14.0
+offset_top = -83.5
+offset_right = 26.0
+offset_bottom = 83.5
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("7_gi1ku")
+
 [node name="TransitionUI" type="Control" parent="CanvasLayer/GameUI"]
 z_index = 1
 layout_mode = 1
@@ -285,4 +334,5 @@ offset_bottom = 40.0
 
 [connection signal="pressed" from="CanvasLayer/GameUI/HUD/BattleUI/PlayerInputPanel/VBoxContainer/BattleUIGridContainer/AttackButton" to="CanvasLayer/GameUI/HUD" method="_on_attack_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/GameUI/HUD/BattleUI/PlayerInputPanel/VBoxContainer/BattleUIGridContainer/DefendButton" to="CanvasLayer/GameUI/HUD" method="_on_defend_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/GameUI/HUD/BattleUI/PlayerInputPanel/VBoxContainer/BattleUIGridContainer/TalkButton" to="CanvasLayer/GameUI/HUD" method="_on_talk_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/GameUI/HUD/BattleUI/PlayerInputPanel/VBoxContainer/BattleUIGridContainer/SpareButton" to="CanvasLayer/GameUI/HUD" method="_on_spare_button_pressed"]

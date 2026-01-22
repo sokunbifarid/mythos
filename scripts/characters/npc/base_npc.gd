@@ -5,14 +5,16 @@ extends CharacterBody2D
 @export var health: int = 4
 @export var shield: int = 2
 @export var damage: int = 2
-@onready var interact_label: Label = $PocketVBoxContainer/InteractLabel
 @onready var animated_sprite_2d: AnimatedSprite2D = $AnimatedSprite2D
-@onready var stats_label: Label = $PocketVBoxContainer/StatsLabel
 @onready var chat_detection_collision_shape_2d: CollisionShape2D = $chat_detection_area/CollisionShape2D
 @onready var collision_shape_2d: CollisionShape2D = $CollisionShape2D
-@onready var battle_action_label: Label = $PocketVBoxContainer/BattleActionLabel
+@onready var damage_label: Label = $NpcData/DamageLabel
+@onready var interact_label: Label = $NpcData/PocketVBoxContainer/InteractLabel
+@onready var battle_action_label: Label = $NpcData/PocketVBoxContainer/BattleActionLabel
+@onready var stats_label: Label = $NpcData/PocketVBoxContainer/StatsLabel
 
 var battle_room: Node2D
+var the_tween: Tween
 
 enum all_states{STOPPED, IDLE, CHATTING, BATTLE}
 var current_state: all_states = all_states.IDLE
@@ -35,7 +37,8 @@ func _ready() -> void:
 	hide_stats()
 
 func _on_end_dialogue() -> void:
-	current_state = all_states.IDLE
+	#currwent_state = all_states.IDLE
+	pass
 
 func _on_preparing_to_go_for_battle() -> void:
 	current_state = all_states.STOPPED
@@ -50,11 +53,12 @@ func _on_gather_battle_data() -> void:
 	show_stats()
 
 func _on_half_way_returning_from_battle() -> void:
-	if current_state == all_states.BATTLE:
+	hide_stats()
+	if self.global_position != last_world_position:
 		self.global_position = last_world_position
 		last_world_position = Vector2.ZERO
-		hide_stats()
 		interact_label.hide()
+		self.scale = Vector2(1,1)
 
 func _on_finished_returning_from_battle() -> void:
 	current_state = all_states.IDLE
@@ -63,12 +67,17 @@ func _on_finished_returning_from_battle() -> void:
 
 func interact() -> bool:
 	if current_state == all_states.IDLE:
-		if DialogueManager.check_if_dialogue_is_present(npc_name, story_stage):
-			SignalHandler.emit_start_dialogue_signal(self)
-			current_state = all_states.CHATTING
-			interact_label.hide()
-			return true
+		current_state = all_states.BATTLE
+		GameManager.set_enemy_to_battle(self)
+		SignalHandler.emit_preparing_to_go_for_battle_signal()
+		return true
 	return false
+
+func chat() -> void:
+	if DialogueManager.check_if_dialogue_is_present(npc_name, story_stage):
+		SignalHandler.emit_start_dialogue_signal(self)
+		current_state = all_states.CHATTING
+		interact_label.hide()
 
 func increase_story_stage() -> void:
 	story_stage += 1
@@ -80,7 +89,8 @@ func get_story_stage() -> int:
 	return story_stage
 
 func set_battle_room(the_room: Node2D) -> void:
-	battle_room = the_room
+	if not battle_room:
+		battle_room = the_room
 
 func _on_chat_detection_area_body_entered(body: Node2D) -> void:
 	if body.is_in_group("player"):
@@ -88,7 +98,6 @@ func _on_chat_detection_area_body_entered(body: Node2D) -> void:
 			player_in_range = true
 			body.set_body_to_interact_with(self)
 			interact_label.show()
-
 
 func _on_chat_detection_area_body_exited(body: Node2D) -> void:
 	if body.is_in_group("player"):
@@ -110,7 +119,11 @@ func take_damage(value: int) -> void:
 	if not shield_is_up:
 		if health > 0:
 			health -= value
+			health = clampi(health, 0, default_health_value)
+			tween_damage_label(value)
 			set_stats()
+	else:
+		tween_damage_label(0)
 
 func defend() -> void:
 	shield_is_up = true
@@ -130,6 +143,7 @@ func show_stats() -> void:
 func hide_stats() -> void:
 	stats_label.hide()
 	battle_action_label.hide()
+	damage_label.hide()
 
 func select_random_task() -> GameManager.character_battle_tasks:
 	var random_selection: int = randi_range(0, 10)
@@ -139,3 +153,23 @@ func select_random_task() -> GameManager.character_battle_tasks:
 
 func set_stats() -> void:
 	stats_label.text = "H: " + str(health) + " D: " + str(damage) + " S: " + str(shield)
+
+func tween_damage_label(value: int) -> void:
+	damage_label.show()
+	const DURATION: float = 0.6
+	if value >= 4:
+		damage_label.text = "-" + str(value) + " CRITICAL"
+	else:
+		damage_label.text = "-" + str(value)
+	damage_label.position = Vector2(0, 32)
+	damage_label.self_modulate = Color(1,1,1,1)
+	if the_tween:
+		the_tween.kill()
+	the_tween = create_tween()
+	the_tween.tween_property(damage_label, "position", Vector2(0, 8), DURATION)
+	the_tween.tween_property(damage_label, "self_modulate", Color(1,1,1,0), DURATION / 2)
+	the_tween.finished.connect(_on_the_tween_finished)
+
+func _on_the_tween_finished() -> void:
+	if damage_label.visible:
+		damage_label.hide()

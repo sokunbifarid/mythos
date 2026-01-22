@@ -13,9 +13,10 @@ position = Vector2(409, 204)
 scale = Vector2(200, 200)
 texture = ExtResource("2_rertr")
 region_enabled = true
-region_rect = Rect2(16, 16, 8, 8)
+region_rect = Rect2(16, 96, 8, 8)
 
 [node name="TileMapLayers" type="Node2D" parent="."]
+position = Vector2(0, 1128)
 
 [node name="BackgroundFloorTileMapLayer" type="TileMapLayer" parent="TileMapLayers"]
 scale = Vector2(2, 2)
@@ -33,7 +34,7 @@ tile_set = ExtResource("3_x1f2m")
 
 [node name="PlayerFootMarkSprite2D" type="Sprite2D" parent="Characters/Player"]
 self_modulate = Color(0, 0, 0, 0.2901961)
-position = Vector2(370, 337)
+position = Vector2(440, 312)
 scale = Vector2(0.5, 0.1)
 texture = ExtResource("4_f4otk")
 
@@ -41,14 +42,14 @@ texture = ExtResource("4_f4otk")
 
 [node name="EnemyFootMarkSprite2D2" type="Sprite2D" parent="Characters/Enemy"]
 self_modulate = Color(0, 0, 0, 0.2901961)
-position = Vector2(599, 207)
-scale = Vector2(0.5, 0.1)
+position = Vector2(511.99997, 275)
+scale = Vector2(0.125, 0.025)
 texture = ExtResource("4_f4otk")
 
 [node name="Camera2D" type="Camera2D" parent="."]
 position = Vector2(480, 250)
 enabled = false
-zoom = Vector2(1.7, 1.7)
+zoom = Vector2(5, 5)
 
 [node name="BattleLoopTimer" type="Timer" parent="."]
 one_shot = true

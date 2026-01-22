@@ -1,6 +1,8 @@
 extends Control
 
 @onready var animation_player: AnimationPlayer = $AnimationPlayer
+
+const TRANSITION_DELAY_VALUE: float = 0.5
 var slide_in_animation_half_way: bool = false
 var player_using_door: bool = false
 
@@ -16,15 +18,15 @@ func _on_player_using_door(_the_door: Node2D, _the_player: CharacterBody2D) -> v
 	player_using_door = true
 
 func _on_preparing_to_go_for_battle() -> void:
-	await get_tree().create_timer(1.0).timeout
+	await get_tree().create_timer(TRANSITION_DELAY_VALUE).timeout
 	animation_player.play("slide_in")
 
 func _on_battle_over() -> void:
-	await get_tree().create_timer(1.0).timeout
+	await get_tree().create_timer(TRANSITION_DELAY_VALUE).timeout
 	animation_player.play("slide_in")
 
 func _on_battle_spared() -> void:
-	await get_tree().create_timer(1.0).timeout
+	await get_tree().create_timer(TRANSITION_DELAY_VALUE).timeout
 	animation_player.play("slide_in")
 
 func _process(_delta: float) -> void:

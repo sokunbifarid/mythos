@@ -32,27 +32,54 @@ collision_layer = 4
 position = Vector2(1, -22)
 shape = SubResource("CapsuleShape2D_doalm")
 
-[node name="PocketVBoxContainer" type="VBoxContainer" parent="."]
+[node name="NpcData" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
 offset_left = -37.0
-offset_top = -105.0
-offset_right = 38.0
-offset_bottom = -67.0
+offset_top = -97.0
+offset_right = 43.0
+offset_bottom = -41.0
+
+[node name="DamageLabel" type="Label" parent="NpcData"]
+layout_mode = 0
+offset_top = 8.0
+offset_right = 75.0
+offset_bottom = 22.0
+theme_override_colors/font_color = Color(1, 0, 0, 1)
+theme_override_constants/outline_size = 3
+theme_override_font_sizes/font_size = 10
+text = "-1"
+horizontal_alignment = 1
+
+[node name="PocketVBoxContainer" type="VBoxContainer" parent="NpcData"]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -37.5
+offset_top = -38.0
+offset_right = 37.5
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_constants/separation = -5
 alignment = 2
 
-[node name="InteractLabel" type="Label" parent="PocketVBoxContainer"]
+[node name="InteractLabel" type="Label" parent="NpcData/PocketVBoxContainer"]
 visible = false
 layout_mode = 2
 theme_override_font_sizes/font_size = 12
 text = "[E] INTERACT"
 horizontal_alignment = 1
 
-[node name="BattleActionLabel" type="Label" parent="PocketVBoxContainer"]
+[node name="BattleActionLabel" type="Label" parent="NpcData/PocketVBoxContainer"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 12
 text = "ATTACKING"
 horizontal_alignment = 1
 
-[node name="StatsLabel" type="Label" parent="PocketVBoxContainer"]
+[node name="StatsLabel" type="Label" parent="NpcData/PocketVBoxContainer"]
 layout_mode = 2
 theme_override_constants/outline_size = 3
 theme_override_font_sizes/font_size = 10
